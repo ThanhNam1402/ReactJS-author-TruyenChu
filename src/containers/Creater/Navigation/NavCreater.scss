@@ -1,0 +1,107 @@
+// ----------------------------------------------
+// SideBar Style
+// ----------------------------------------------
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+::-webkit-scrollbar-track {
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #0000002d;
+    border-radius: 12px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #00f7ff;
+}
+
+
+
+#sidebarnav {
+    padding: 8px;
+}
+
+.left-sidebar {
+    position: relative;
+    height: calc(100%) !important;
+    border-right: 1px solid rgb(229, 234, 239);
+
+
+    .scroll-sidebar {
+        overflow-y: scroll;
+        height: calc(100vh - 80px);
+        border-radius: 8px;
+
+        .simplebar-track.simplebar-horizontal {
+            visibility: hidden !important;
+        }
+    }
+}
+
+
+.sidebar-nav {
+
+    ul {
+        .sidebar-item {
+            .sidebar-link {
+                display: flex;
+                align-items: center;
+                white-space: nowrap;
+                align-items: center;
+                line-height: 25px;
+                margin: 0px 0px 2px;
+                padding: 10px;
+                border-radius: 7px;
+                gap: 15px;
+
+                span {
+                    transform: translateX(0);
+                    transition: all .25s ease;
+                }
+
+                &:hover {
+                    span {
+                        transform: translateX(4px);
+                        color: blue;
+
+                    }
+                }
+            }
+
+            .link-disabled {
+                opacity: 0.3;
+            }
+
+            &.selected>.sidebar-link.active,
+            &.selected>.sidebar-link,
+            >.sidebar-link.active {
+                background-image: linear-gradient(118deg, #3b28e4, rgba(126, 117, 226, 0.7));
+
+                span {
+                    color: white !important;
+
+                }
+
+                svg {
+                    color: white !important;
+
+                }
+            }
+
+        }
+    }
+
+    .sidebar-list {
+        .sidebar-list-item {
+            padding: 8px 0;
+        }
+    }
+
+    .img-navigation {
+        padding: 14px 6px 0px 6px;
+    }
+}
