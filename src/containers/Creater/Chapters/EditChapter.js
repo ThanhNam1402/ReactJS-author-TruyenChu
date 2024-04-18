@@ -3,13 +3,11 @@
 import React from 'react';
 import createrService from '../../../services/createrService';
 
-import { Box, Button } from '@mui/material';
+import { Box, Button, InputLabel, TextField } from '@mui/material';
 
 import { toast } from 'react-toastify';
 
 class EditChapter extends React.Component {
-
-
     constructor(props) {
         super(props);
         this.state = {
@@ -18,8 +16,6 @@ class EditChapter extends React.Component {
             bookID: ''
         }
     }
-
-    // chỉnh sửa nội dung and name 
 
     async componentDidMount() {
         let id = this.props.match.params.id
@@ -79,19 +75,32 @@ class EditChapter extends React.Component {
 
             <>
 
-                <Box sx={{ backgroundColor: 'primary.main', marginBottom: '16px' }} className='afters'>
+                <Box sx={{ backgroundColor: 'primary.main', marginBottom: '16px' }}>
 
-                    <textarea className="bookDescription draft-note" id='content' rows="20"
-                        placeholder='hi'
-                        value={content}
+                    <TextField
+                        className='bookDescription'
+                        fullWidth hiddenLabel
+                        color="secondary"
+                        sx={{ backgroundColor: 'primary.main', }}
+                        multiline
+                        minRows={20}
+                        placeholder='Tóm tắt cho truyện không nên quá dài mà nên ngắn gọn, Tập trung, thú vị. Phần này rất quan trọng vì nó quyết định độc giả có đọc hay không. Tối đa 700 từ'
+                        id="input-content" size="small"
                         onChange={(e) => this.handelInputVale(e, 'content')}
-                    >
-                    </textarea>
+                        value={content}
+                    />
                 </Box>
 
                 <Box sx={{ marginBottom: '16px ' }}>
-                    <input type="text" className="form-control bookDescription"
-                        placeholder='Ten Chuong'
+
+                    <InputLabel id="namebook" className="lable-input">Tên Chương</InputLabel>
+                    <TextField
+                        className='namebook'
+                        sx={{ backgroundColor: 'primary.main', }}
+                        hiddenLabel id="namebook"
+                        placeholder='Viết hoa chữ đầu mỗi từ: Giống Như Thế Này'
+                        variant="outlined" color="secondary"
+                        size="small" fullWidth
                         value={draftName}
                         onChange={(e) => this.handelInputVale(e, 'draftName')}
                     />

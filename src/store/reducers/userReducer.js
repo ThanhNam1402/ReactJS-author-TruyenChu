@@ -1,33 +1,68 @@
 import actionTypes from '../actions/actionTypes';
 
 const initialState = {
-    isLoggedIn: false,
-    userInfo: null
+    isLoginRedux: false,
+    userInfo: {
+        token: null,
+        account: null,
+    }
 }
 
-const appReducer = (state = initialState, action) => {
+const userReducer = (state = initialState, action) => {
     switch (action.type) {
         case actionTypes.USER_LOGIN_SUCCESS:
+            console.log(' token sucs');
             return {
                 ...state,
-                isLoggedIn: true,
-                userInfo: action.userInfo
+                isLoginRedux: true,
+                userInfo: {
+                    token: action.payload
+                }
             }
-        case actionTypes.USER_LOGIN_FAIL:
+        case actionTypes.USER_LOGOUT_SUCCESS:
+            console.log(' token fail');
+
             return {
                 ...state,
-                isLoggedIn: false,
-                userInfo: null
+                isLoginRedux: false,
+                userInfo: {
+                    token: null,
+                    account: null
+                }
             }
-        case actionTypes.PROCESS_LOGOUT:
+
+        case actionTypes.REFRESH_TOKEN_REQUEST:
+            console.log('refresh token request');
             return {
                 ...state,
-                isLoggedIn: false,
-                userInfo: null
+            }
+        case actionTypes.REFRESH_TOKEN_SUCCESS:
+            console.log('refresh token success');
+            return {
+                ...state,
+                userInfo: {
+                    ...state.userInfo,
+                    token: action.payload
+                }
+            }
+        case actionTypes.REFRESH_TOKEN_FAIL:
+            console.log('refresh token failed');
+            return {
+                ...state,
+            }
+
+        case actionTypes.GET_ACCOUNT_SUCCESS:
+            console.log('get account success');
+            return {
+                ...state,
+                userInfo: {
+                    ...state.userInfo,
+                    account: action.payload
+                }
             }
         default:
             return state;
     }
 }
 
-export default appReducer;
+export default userReducer;

@@ -33,6 +33,7 @@ class SelectCateBook extends React.Component {
 
                     <FormControl sx={{ my: 1, minWidth: '100%', backgroundColor: 'primary.main', borderRadius: '4px' }} size="small">
                         <Select
+                            color="secondary"
                             labelId={labelName}
                             value={valueInput}
                             displayEmpty

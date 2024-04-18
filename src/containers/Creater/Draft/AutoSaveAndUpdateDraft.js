@@ -3,12 +3,13 @@ import React from 'react';
 import createrService from '../../../services/createrService';
 import { toast } from 'react-toastify';
 import { debounce } from 'lodash';
+import { connect } from 'react-redux';
 
 import '../Home.scss';
-
 import './draft.scss';
 
 import { Box, Button, Typography, MenuItem, FormControl, Select, TextField } from '@mui/material';
+// import { Draft } from '../../../components/CsDraft';
 
 
 
@@ -24,7 +25,7 @@ class AutoSaveAndUpdateDraft extends React.Component {
                 draftName: '',
                 draftLength: 0,
                 id: "",
-                userID: 1
+                userID: ''
             },
             isUpdate: false,
             isCreate: false,
@@ -35,7 +36,10 @@ class AutoSaveAndUpdateDraft extends React.Component {
 
         if (this.props.isAdd && this.props.isAdd === true) {
             this.setState({
-                isCreate: true
+                isCreate: true,
+                draft: {
+                    userID: this.props.creatorID
+                }
             })
         }
 
@@ -53,7 +57,10 @@ class AutoSaveAndUpdateDraft extends React.Component {
     handelGetBook = async () => {
 
         try {
-            let res = await createrService.handelgetBooks();
+
+            let creatorID = this.props.creatorID
+            console.log("creatorID", creatorID);
+            let res = await createrService.handelgetBooks(creatorID);
             if (res && res.EC === 0) {
                 let coppyState = { ...this.state }
                 coppyState.listBook = res.data
@@ -66,8 +73,6 @@ class AutoSaveAndUpdateDraft extends React.Component {
     }
 
     async componentDidUpdate(prevProps) {
-        console.log(this.props);
-
         if (this.props.idBook && this.props.idBook !== this.state.idBook) {
             let coppyState = { ...this.state }
             coppyState.draft.bookID = this.props.idBook
@@ -111,26 +116,23 @@ class AutoSaveAndUpdateDraft extends React.Component {
 
     // XONG , TẠO DRAFT
     handelCreateDraft = async () => {
-
-
         if (this.state.draft.draftLength > 6) {
-            let draft = this.state.draft
 
+            let draft = this.state.draft
             let data = await createrService.handelCreateDrafft(draft)
+
 
             if (data && data.EC !== 0) {
                 return toast.error(data.message)
             }
 
             if (data && data.EC === 0) {
-
                 let coppyState = { ...this.state }
                 coppyState.draft.id = data.data.id
                 this.setState({ ...coppyState })
-
+                console.log('state', this.state);
             }
         }
-
     }
 
     // XONG , AUTOSAVE 
@@ -191,14 +193,19 @@ class AutoSaveAndUpdateDraft extends React.Component {
 
         return (
             <>
-
-                <Box sx={{ backgroundColor: 'primary.main', marginBottom: '16px' }} className='afters'>
-                    <textarea className="bookDescription draft-note" id='content' rows="20"
-                        placeholder='hi'
+                <Box sx={{ backgroundColor: 'primary.main', marginBottom: '16px' }}>
+                    <TextField
+                        fullWidth
+                        hiddenLabel
+                        multiline
+                        minRows={18}
+                        margin="normal"
+                        size="small"
+                        id="input-content"
                         value={content}
+                        color="secondary"
                         onChange={(e) => this.handelInputVale(e, 'content')}
-                    >
-                    </textarea>
+                    />
                 </Box>
 
 
@@ -215,26 +222,19 @@ class AutoSaveAndUpdateDraft extends React.Component {
                     <>
                         <Box sx={{ marginBottom: '16px ' }}>
                             <TextField
-                                sx={{
-                                    backgroundColor: 'primary.main',
-                                }}
-                                className='bookDescription'
-                                hiddenLabel
-                                id="namebook"
+                                hiddenLabel id="namebook"
                                 placeholder='Tên Chương'
-                                variant="filled"
-                                size="small"
-                                fullWidth
+                                size="small" fullWidth
                                 value={draftName}
+                                color="secondary"
                                 onChange={(e) => this.handelInputVale(e, 'draftName')}
 
                             />
                         </Box>
 
 
-
                         <Box sx={{ marginBottom: '16px ' }}  >
-                            <FormControl size="small" variant="filled" fullWidth disabled={(idBook ? true : false)}>
+                            <FormControl color="secondary" size="small" fullWidth disabled={(idBook ? true : false)}>
                                 <Select
                                     value={idBook && idBook !== '' ? idBook : bookID}
                                     onChange={(e) => this.handelInputVale(e, 'bookID')}
@@ -257,10 +257,7 @@ class AutoSaveAndUpdateDraft extends React.Component {
                         </Box>
 
                         <Box sx={{ marginBottom: '16px ' }}>
-                            <Button variant="contained" sx={{
-                                width: '100%',
-                                color: 'primary.main',
-                            }}
+                            <Button fullWidth variant="contained"
                                 color="secondary"
                                 onClick={() => this.handelPublishDraft()}>Xuất Bản
                             </Button>
@@ -280,4 +277,16 @@ class AutoSaveAndUpdateDraft extends React.Component {
 
 }
 
-export default AutoSaveAndUpdateDraft;
+const mapStateToProps = state => {
+    return {
+        creatorID: state.user.userInfo.account.id
+
+    };
+};
+
+const mapDispatchToProps = dispatch => {
+    return {
+    };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(AutoSaveAndUpdateDraft);

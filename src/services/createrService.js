@@ -2,14 +2,21 @@ import axios from "../axios";
 
 const createrService = {
 
+    handelgetToppic() {
+        return axios.get(`/admin/api/topics?page=1&limit=10`)
+    },
+    handelgetTopicbBySlug(slug) {
+        return axios.get(`/api/creater/topic/${slug}`)
+    },
+
     // BOOK >>>>
 
     handelGetCateGoRy() {
         return axios.get(`/api/creater/getCateGoRy`)
     },
 
-    handelgetBooks() {
-        return axios.get(`/api/creater/getBooks`)
+    handelgetBooks(creatorID) {
+        return axios.get(`/api/creater/getBooks?creatorID=${creatorID}`)
     },
 
     handelAddBook(data) {
@@ -31,7 +38,6 @@ const createrService = {
         });
     },
 
-
     handelgetBookByID(id) {
         return axios.get(`/api/creater/getBookById?id=${id}`)
     },
@@ -41,13 +47,13 @@ const createrService = {
         return axios.post(`/api/creater/createDraft`, data)
     },
     handelAutoSaveDraft(data) {
-        return axios.post(`/api/creater/editDraft`, data)
+        return axios.put(`/api/creater/editDraft`, data)
     },
     handelUpdateDraftByID(data) {
-        return axios.post(`/api/creater/editDraftByID`, data)
+        return axios.put(`/api/creater/editDraftByID`, data)
     },
-    handelgetDrafts() {
-        return axios.get(`/api/creater/getDrafts`)
+    handelgetDrafts(creatorID) {
+        return axios.get(`/api/creater/getDrafts?creatorID=${creatorID}`)
     },
 
     handelgetDraftByID(id) {
@@ -62,13 +68,11 @@ const createrService = {
         });
     },
 
-
     // CHAPTER >>>> 
 
     handelgetChapterByBookID(id) {
         return axios.get(`/api/creater/getChapterByBookID?bookID=${id}`)
     },
-
 
     // ORTHER >>>>
 

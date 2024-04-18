@@ -10,10 +10,23 @@ const theme = extendTheme({
             palette: {
                 primary: {
                     main: '#f8f8f8',
-                    sub: '#6e6b7b'
+                    light: '#fff',
+                    sub: '#6e6b7b',
+                    contrastText: '#fff',
+
                 },
                 secondary: {
                     main: '#9287f9',
+                    contrastText: '#fff',
+                },
+                warning: {
+                    main: '#ffab00',
+                },
+                success: {
+                    main: '#4caf50'
+                },
+                input: {
+
                 }
             }
         },
@@ -21,8 +34,17 @@ const theme = extendTheme({
             palette: {
                 primary: {
                     main: '#333643',
-                    sub: '#7B91A7'
-                }
+                    sub: '#7B91A7',
+                    contrastText: '#7B91A7',
+                    light: '#fff',
+                },
+                warning: {
+                    main: '#ffff8d',
+                },
+                secondary: {
+                    main: '#9287f9',
+                    contrastText: '#333',
+                },
             }
         }
     }

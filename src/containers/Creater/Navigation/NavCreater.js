@@ -27,7 +27,7 @@ class NavCreater extends Component {
                         justifyContent: 'space-between',
                         height: (theme) => theme.creater.navbar
                     }} >
-                        <NavLink exact to="/creater" className="text-nowrap logo-img">
+                        <NavLink exact to="/" className="text-nowrap logo-img">
                             <img src={logo} height="60px" alt="a" />
                         </NavLink>
                     </Box>
@@ -49,7 +49,7 @@ class NavCreater extends Component {
                                     <NoteAdd sx={{ color: 'primary.sub' }} />
 
                                     <Typography sx={{ color: 'primary.sub' }} variant="span" >
-                                        Them Ban Thao
+                                        Thêm Bản Thảo
                                     </Typography>
                                 </NavLink>
                             </li>
@@ -57,7 +57,7 @@ class NavCreater extends Component {
                                 <NavLink className="sidebar-link" exact to="/creater/drafts">
                                     <Description sx={{ color: 'primary.sub' }} />
                                     <Typography sx={{ color: 'primary.sub' }} variant="span" >
-                                        Cac Ban Thao
+                                        Các Bản Thảo
                                     </Typography>
                                 </NavLink>
                             </li>

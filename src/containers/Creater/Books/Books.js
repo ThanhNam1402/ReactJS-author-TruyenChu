@@ -3,8 +3,8 @@ import { Link } from 'react-router-dom';
 
 import Moment from 'moment';
 import createrService from '../../../services/createrService';
+import { connect } from 'react-redux';
 
-// import ModalConfirm from '../../../components/ModalConfirm';
 
 import { toast } from 'react-toastify';
 import { CardContent, Typography, Box, Grid, Tooltip } from '@mui/material';
@@ -21,22 +21,21 @@ class Books extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            listBook: [],
-            openModel: false
+            listBook: []
 
         }
     }
 
     async componentDidMount() {
         this.handelGetBook()
-
     }
 
 
     handelGetBook = async () => {
-
         try {
-            let res = await createrService.handelgetBooks();
+            let creatorID = this.props.creatorID
+
+            let res = await createrService.handelgetBooks(creatorID);
 
             if (res && res.EC === 0) {
 
@@ -71,10 +70,9 @@ class Books extends Component {
     }
 
 
-
     render() {
 
-        let { collapseID, listBook, openModel } = this.state
+        let { listBook } = this.state
 
         return (
             <>
@@ -204,4 +202,16 @@ class Books extends Component {
 
 }
 
-export default Books
+const mapStateToProps = state => {
+    return {
+        creatorID: state.user.userInfo.account.id
+
+    };
+};
+
+const mapDispatchToProps = dispatch => {
+    return {
+    };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Books);

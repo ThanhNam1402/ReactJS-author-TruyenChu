@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import createrService from '../../../services/createrService';
 import SelectCateBook from './SelectCateBook'
 
+import { connect } from 'react-redux';
 import { toast } from 'react-toastify';
 import { Box, Typography, Card, CardContent, Checkbox, FormControlLabel, TextField, InputLabel, Button } from '@mui/material';
 
@@ -85,10 +86,13 @@ class AddBook extends Component {
             return toast.error('Vui Lòng Đồng ý Với Chính Sách  !!')
 
         }
-
-        let newBook = this.state.newBook
-
+        let creatorID = this.props.creatorID
+        let newBook = {
+            ...this.state.newBook, creatorID
+        }
         let data = await createrService.handelAddBook(newBook);
+
+        console.log(data);
 
         if (data && data.EC === 0) {
             toast.success(data.EM);
@@ -140,34 +144,36 @@ class AddBook extends Component {
                     <CardContent >
                         <form>
                             <Box sx={{ mb: '16px' }} >
-                                <InputLabel id="namebook" className="lable-input">Tên Truyện</InputLabel>
+                                <InputLabel className="lable-input">Tên Truyện</InputLabel>
                                 <TextField
+                                    className="bookDescription"
                                     sx={{
                                         backgroundColor: 'primary.main',
                                     }}
-                                    className='namebook'
-                                    hiddenLabel
-                                    id="namebook"
+                                    hiddenLabel id="namebook"
                                     placeholder='Viết hoa chữ đầu mỗi từ: Giống Như Thế Này'
-                                    variant="filled"
-                                    size="small"
-                                    fullWidth
+                                    variant="outlined" color="secondary"
+                                    size="small" fullWidth
                                     value={name}
                                     onChange={(e) => this.handelInputVale(e, 'name')}
-
                                 />
                             </Box>
 
                             <Box sx={{ mb: '16px' }} >
                                 <InputLabel id="content" className="lable-input" >Giới thiệu</InputLabel>
-                                <textarea rows="6"
-                                    className="bookDescription"
-                                    id='content'
+
+                                <TextField
+                                    className='bookDescription'
+                                    fullWidth hiddenLabel
                                     value={content}
-                                    onChange={(e) => this.handelInputVale(e, 'content')}
+                                    color="secondary"
+                                    sx={{ backgroundColor: 'primary.main', }}
+                                    multiline
+                                    minRows={6}
                                     placeholder='Tóm tắt cho truyện không nên quá dài mà nên ngắn gọn, Tập trung, thú vị. Phần này rất quan trọng vì nó quyết định độc giả có đọc hay không. Tối đa 700 từ'
-                                >
-                                </textarea>
+                                    id="input-content" size="small"
+                                    onChange={(e) => this.handelInputVale(e, 'content')}
+                                />
 
                             </Box>
 
@@ -206,11 +212,9 @@ class AddBook extends Component {
                                 <FormControlLabel control={<Checkbox onClick={() => this.handelCheckBox()} />} label="Đồng Ý Với Chính Sách" />
                             </Box>
 
-                            <Button variant="contained" fullWidth
-                                sx={{
-                                    backgroundColor: 'secondary.main'
-                                }}
+                            <Button fullWidth
                                 onClick={() => this.handelAdd()}
+                                variant="contained" color='secondary' sx={{ width: '100%', color: 'primary.main' }}
                             >
                                 {this.state.isLoading ? <i className="fas fa-spinner fa-spin"></i> : "Thêm Mới"}
                             </Button>
@@ -224,4 +228,16 @@ class AddBook extends Component {
     }
 }
 
-export default AddBook
+const mapStateToProps = state => {
+    return {
+        creatorID: state.user.userInfo.account.id
+
+    };
+};
+
+const mapDispatchToProps = dispatch => {
+    return {
+    };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(AddBook);

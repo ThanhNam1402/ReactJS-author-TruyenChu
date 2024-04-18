@@ -1,18 +1,19 @@
-import React, { Component } from 'react';
-// import Select from "react-select";
+import React from 'react';
 import createrService from '../../../services/createrService';
 import Moment from 'moment';
+import { connect } from 'react-redux';
+
 import '../Home.scss';
 import { toast } from 'react-toastify';
 import { Link } from 'react-router-dom';
-import logo from '../../../assets/images/logoReact.svg';
 
-
-import { Typography, Box, Card, CardContent, Chip, Button, Tooltip } from '@mui/material';
+import { Typography, Box, Card, CardContent, Chip, Tooltip } from '@mui/material';
 import { Clear, EditNote } from '@mui/icons-material';
 import { Link as CusTomLinkIcon } from "@mui/icons-material";
+import IconButton from '@mui/material/IconButton';
 
 
+import CsLoading from '../../../components/CsLoading';
 
 class Draft extends React.Component {
     constructor(props) {
@@ -20,7 +21,6 @@ class Draft extends React.Component {
         this.state = {
             listDraft: [],
             isLoading: false
-
         }
     }
 
@@ -36,7 +36,9 @@ class Draft extends React.Component {
             this.setState({ isLoading: true })
             await new Promise(resolve => setTimeout(resolve, 500));
 
-            const res = await createrService.handelgetDrafts();
+            let creatorID = this.props.creatorID
+
+            const res = await createrService.handelgetDrafts(creatorID);
 
             if (res && res.EC === 0) {
                 let coppyState = { ...this.state }
@@ -57,23 +59,17 @@ class Draft extends React.Component {
     }
 
     handelDelDraft = async (id) => {
-        console.log('handelDelDrafts', id)
 
         let res = await createrService.handelDelDraft(id)
-
         if (res && res.EC === 0) {
             toast.success(res.EM)
             this.getDrafts()
-
         }
     }
-
-
 
     render() {
 
         let { listDraft, isLoading } = this.state
-
 
         return (
             <>
@@ -87,11 +83,7 @@ class Draft extends React.Component {
                 </Box>
                 {
                     isLoading === true ?
-                        <Card>
-                            <CardContent sx={{ textAlign: 'center' }}>
-                                <img src={logo} className="App-logo" alt="logo" />
-                            </CardContent>
-                        </Card>
+                        <CsLoading />
 
                         :
 
@@ -106,22 +98,20 @@ class Draft extends React.Component {
                                                 <Typography sx={{ color: 'primary.sub', fontWeight: 'bold' }} variant='span' >
                                                     {item.draftName ? item.draftName : '[Khuyet Danh]'}
                                                 </Typography>
-
-
                                             </Link>
-                                            <Typography sx={{ color: 'primary.sub', my: '16px' }} className='text-overflow text-overflow-2-lines' variant='p' component='p'>
+                                            <Typography sx={{ color: 'primary.sub', my: '16px' }} className='text-overflow text-overflow-2-lines' variant="body2" component='p'>
                                                 {item.content}
                                             </Typography>
 
-                                            {item["Book.name"] ?
+                                            {item.bookName ?
                                                 <Link to={`/creater/book/${item["Book.id"]}/chapters/`}>
                                                     <Chip
                                                         className="text-white"
-                                                        label={item["Book.name"]}
+                                                        label={item.bookName}
                                                         icon={<CusTomLinkIcon />}
                                                         color="secondary"
                                                         size="small"
-
+                                                        variant="outlined"
                                                     />
                                                 </Link>
                                                 : ''
@@ -138,19 +128,23 @@ class Draft extends React.Component {
                                                     alignItems: 'center',
                                                 }}>
                                                     <Link to={`/creater/drafts/edit/${item.id}`} className="draft-link-edit" >
-                                                        <Tooltip title="Chỉnh Sửa">
-                                                            <EditNote
-                                                                sx={{
-                                                                    color: 'primary.sub',
-                                                                }} />
-                                                        </Tooltip>
+                                                        <IconButton>
+                                                            <Tooltip title="Chỉnh Sửa">
+                                                                <EditNote
+                                                                    sx={{
+                                                                        color: 'primary.sub',
+                                                                    }} />
+                                                            </Tooltip>
+                                                        </IconButton>
                                                     </Link>
 
                                                     <span onClick={() => this.handelDelDraft(item.id)}>
-                                                        <Tooltip title="Xóa">
-                                                            <Clear
-                                                                sx={{ color: 'primary.sub', }} />
-                                                        </Tooltip>
+                                                        <IconButton>
+                                                            <Tooltip title="Xóa">
+                                                                <Clear
+                                                                    sx={{ color: 'primary.sub', }} />
+                                                            </Tooltip>
+                                                        </IconButton>
                                                     </span>
 
                                                 </Box>
@@ -162,8 +156,8 @@ class Draft extends React.Component {
                             :
                             <Card >
                                 <CardContent>
-                                    <Typography sx={{ color: 'primary.sub' }} variant='span' >
-                                        Tam Chua Co Ban Thao Nao
+                                    <Typography sx={{ color: 'primary.sub', textAlign: "center", width: '100%' }} variant='body2' component={'p'} >
+                                        Không có bản thảo nào
                                     </Typography>
                                 </CardContent>
                             </Card >
@@ -173,4 +167,17 @@ class Draft extends React.Component {
     }
 }
 
-export default Draft
+
+const mapStateToProps = state => {
+    return {
+        creatorID: state.user.userInfo.account.id
+
+    };
+};
+
+const mapDispatchToProps = dispatch => {
+    return {
+    };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Draft);

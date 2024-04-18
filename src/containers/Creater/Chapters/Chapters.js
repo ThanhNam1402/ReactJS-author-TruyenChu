@@ -6,6 +6,7 @@ import { Link } from 'react-router-dom'
 import BookNavigation from '../Books/BookNavigate';
 import Moment from 'moment';
 import { Box, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Tooltip } from '@mui/material';
+import IconButton from '@mui/material/IconButton';
 import { EditNote, Clear } from '@mui/icons-material';
 
 import { toast } from 'react-toastify';
@@ -81,9 +82,9 @@ class Chaters extends React.Component {
                         <TableHead>
                             <TableRow>
                                 <TableCell>So TT</TableCell>
-                                <TableCell align="right">Ten Chuong</TableCell>
-                                <TableCell align="right">Ngay Xuat Ban</TableCell>
-                                <TableCell align="right">Thao Tac</TableCell>
+                                <TableCell align="right">Tên Chương</TableCell>
+                                <TableCell align="right">Ngày Xuất Bản</TableCell>
+                                <TableCell align="right">Thao Tác </TableCell>
                             </TableRow>
                         </TableHead>
                         <TableBody>
@@ -101,21 +102,21 @@ class Chaters extends React.Component {
                                         <TableCell align="right"  >
 
 
-                                            <Link to={`/creater/books/chapters/edit/${item.id}`} s className="draft-link-edit" >
-                                                <Tooltip title="Chỉnh Sửa">
-                                                    <EditNote
-                                                        sx={{
-                                                            color: 'primary.sub',
-                                                        }} />
-                                                </Tooltip>
-                                            </Link>
+                                            <IconButton>
+                                                <Link to={`/creater/books/chapters/edit/${item.id}`} s className="draft-link-edit" >
+                                                    <Tooltip title="Chỉnh Sửa">
+                                                        <EditNote sx={{ color: 'primary.sub' }} />
+                                                    </Tooltip>
+                                                </Link>
+                                            </IconButton>
 
-                                            <span onClick={() => this.handelDelChapter(item.id)}>
+
+                                            <IconButton onClick={() => this.handelDelChapter(item.id)}>
                                                 <Tooltip title="Xóa">
                                                     <Clear
                                                         sx={{ color: 'primary.sub', }} />
                                                 </Tooltip>
-                                            </span>
+                                            </IconButton>
 
                                         </TableCell>
                                     </TableRow>
