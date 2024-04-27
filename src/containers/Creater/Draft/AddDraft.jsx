@@ -14,6 +14,8 @@ class AddDraft extends Component {
 
   componentDidMount() {
     try {
+
+      console.log(this.props);
       let idBook = this.props.location.state.idBook;
       this.setState({ idBook: idBook });
     } catch (error) {

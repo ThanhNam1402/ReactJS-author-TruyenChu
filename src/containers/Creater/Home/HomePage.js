@@ -8,6 +8,10 @@ import { Link } from "react-router-dom";
 import createrService from "../../../services/createrService";
 import './HomePage.scss'
 
+import { delay } from "../../../utils";
+
+import CsLoading from "../../../components/CsLoading";
+
 
 class HomeCreaterPage extends React.Component {
 
@@ -15,14 +19,25 @@ class HomeCreaterPage extends React.Component {
         super(props);
         this.state = {
             listTopic: [],
+            isLoading: false
         }
     }
 
-    async componentDidMount() {
+    componentDidMount() {
+        this.getTopic()
+    }
+
+
+
+    getTopic = async () => {
         try {
+            this.setState({ isLoading: true })
+            await delay(1000)
+
             let res = await createrService.handelgetToppic()
             if (res && res.EC === 0) {
                 this.setState({
+                    isLoading: false,
                     listTopic: res.data ? res.data : []
                 })
             }
@@ -33,54 +48,60 @@ class HomeCreaterPage extends React.Component {
 
 
     render() {
-        let { listTopic } = this.state;
+        let { listTopic, isLoading } = this.state;
 
         return (
             <>
-                <Card >
-                    <CardContent >
-                        <Typography variant="h6" component="p" sx={{ color: 'primary.sub' }}>
-                            Tin Tức Mới
-                        </Typography>
 
-                        <Box>
-                            <List>
+                {isLoading ?
+                    <CsLoading />
+                    :
+                    <Card >
+                        <CardContent >
+                            <Typography variant="h6" component="p" sx={{ color: 'primary.sub' }}>
+                                Tin Tức Mới
+                            </Typography>
 
-                                {listTopic && listTopic.length ?
-                                    listTopic.map((item, index) => {
-                                        return (
-                                            <ListItem key={index} disablePadding>
-                                                <Link to={`/creater/topic/${item.slug}`} className='new-item'>
-                                                    <ListItemButton >
-                                                        <RadioButtonUnchecked sx={{ mr: '16px', color: 'primary.sub', }}
-                                                            fontSize="small"
-                                                        />
-                                                        <Typography variant="p" component="p" sx={{
-                                                            color: 'warning.main',
-                                                            mr: '4px'
-                                                        }}>
-                                                            {item.name}
-                                                        </Typography>
+                            <Box>
+                                <List>
+                                    {listTopic && listTopic.length ?
+                                        listTopic.map((item, index) => {
+                                            return (
+                                                <ListItem key={index} disablePadding>
+                                                    <Link to={`/creater/topic/${item.slug}`} className='new-item'>
+                                                        <ListItemButton >
+                                                            <RadioButtonUnchecked sx={{ mr: '16px', color: 'primary.sub', }}
+                                                                fontSize="small"
+                                                            />
+                                                            <Typography variant="p" component="p" sx={{
+                                                                color: 'warning.main',
+                                                                mr: '4px'
+                                                            }}>
+                                                                {item.name}
+                                                            </Typography>
 
-                                                        <Typography variant="overline" display="block" sx={{
-                                                            color: 'primary.sub',
-                                                        }}>
-                                                            {moment(item.createdAt).format('DD-MM-YYYY')}
-                                                        </Typography>
-                                                    </ListItemButton>
-                                                </Link>
-                                            </ListItem>
-                                        )
-                                    })
+                                                            <Typography variant="overline" display="block" sx={{
+                                                                color: 'primary.sub',
+                                                            }}>
+                                                                {moment(item.createdAt).format('DD-MM-YYYY')}
+                                                            </Typography>
+                                                        </ListItemButton>
+                                                    </Link>
+                                                </ListItem>
+                                            )
+                                        })
 
-                                    :
+                                        :
 
-                                    ''
-                                }
-                            </List>
-                        </Box>
-                    </CardContent>
-                </Card>
+                                        ''}
+
+                                </List>
+
+                            </Box>
+                        </CardContent>
+                    </Card>
+                }
+
             </>
         )
     }

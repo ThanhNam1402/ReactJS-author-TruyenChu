@@ -1,16 +1,15 @@
 import React from 'react';
-// import Select from "react-select";
-import createrService from '../../../services/createrService';
 import { toast } from 'react-toastify';
 import { debounce } from 'lodash';
 import { connect } from 'react-redux';
-
-import '../Home.scss';
-import './draft.scss';
-
 import { Box, Button, Typography, MenuItem, FormControl, Select, TextField } from '@mui/material';
-// import { Draft } from '../../../components/CsDraft';
 
+
+import serviceDrafts from '../../../services/serviceDrafts';
+import serviceBooks from '../../../services/serviceBooks';
+import './draft.scss';
+import CsLoading from '../../../components/CsLoading';
+import { delay } from '../../../utils';
 
 
 class AutoSaveAndUpdateDraft extends React.Component {
@@ -20,7 +19,7 @@ class AutoSaveAndUpdateDraft extends React.Component {
             idBook: '',
             listBook: [],
             draft: {
-                bookID: 0,
+                bookID: '0',
                 content: '',
                 draftName: '',
                 draftLength: 0,
@@ -29,16 +28,17 @@ class AutoSaveAndUpdateDraft extends React.Component {
             },
             isUpdate: false,
             isCreate: false,
+            isLoading: false
         }
     }
 
-    componentDidMount() {
+    async componentDidMount() {
 
         if (this.props.isAdd && this.props.isAdd === true) {
             this.setState({
                 isCreate: true,
                 draft: {
-                    userID: this.props.creatorID
+                    userID: this.props.userAccount.id
                 }
             })
         }
@@ -53,18 +53,25 @@ class AutoSaveAndUpdateDraft extends React.Component {
 
     }
 
-    // XONG
+    // get book 
     handelGetBook = async () => {
 
         try {
 
-            let creatorID = this.props.creatorID
+            await delay(1000);
+            this.setState({ isLoading: true })
+
+            let creatorID = this.props.userAccount.id
+
             console.log("creatorID", creatorID);
-            let res = await createrService.handelgetBooks(creatorID);
+            let res = await serviceBooks.handelgetBooks(creatorID);
             if (res && res.EC === 0) {
                 let coppyState = { ...this.state }
                 coppyState.listBook = res.data
-                this.setState({ ...coppyState })
+                this.setState({ ...coppyState, isLoading: false })
+
+
+                console.log(this.state);
             }
         } catch (error) {
             console.log(error);
@@ -72,6 +79,8 @@ class AutoSaveAndUpdateDraft extends React.Component {
 
     }
 
+
+    // get id book 
     async componentDidUpdate(prevProps) {
         if (this.props.idBook && this.props.idBook !== this.state.idBook) {
             let coppyState = { ...this.state }
@@ -84,6 +93,11 @@ class AutoSaveAndUpdateDraft extends React.Component {
         // XONG
         // CHỈNH SỬA , SETSTATE KHI CẬP NHẬT DRAFT 
         if (prevProps.dataUpdate !== this.props.dataUpdate) {
+            this.setState({
+                isLoading: true
+            })
+            await delay(1000)
+
             let { dataUpdate } = this.props
 
             this.setState({
@@ -92,13 +106,16 @@ class AutoSaveAndUpdateDraft extends React.Component {
                     draftLength: dataUpdate.content.split(" ").length,
                     draftName: dataUpdate.draftName,
                     id: dataUpdate.id,
-                    bookID: dataUpdate.bookID,
+                    bookID: dataUpdate.bookID ? dataUpdate.bookID : 0,
                     userID: 1
                 }
             })
+            this.setState({
+                isLoading: false
+            })
         }
 
-        // XONG 
+        // XONG, create a new draft
         if (this.state.isCreate === true && this.state.draft.draftLength > 7) {
             this.handelCreateDraft()
             this.setState({
@@ -107,19 +124,19 @@ class AutoSaveAndUpdateDraft extends React.Component {
             })
         }
 
-        // XONG 
+        // XONG, auto save khi lenght > 10 và không thể xóa hết các các chữ trong draft 
         if (this.state.isUpdate === true && this.state.draft.draftLength > 10) {
             this.handelAutoSaveDraft()
         }
 
     }
 
-    // XONG , TẠO DRAFT
+    // create draft 
     handelCreateDraft = async () => {
         if (this.state.draft.draftLength > 6) {
 
             let draft = this.state.draft
-            let data = await createrService.handelCreateDrafft(draft)
+            let data = await serviceDrafts.handelCreateDrafft(draft)
 
 
             if (data && data.EC !== 0) {
@@ -135,15 +152,14 @@ class AutoSaveAndUpdateDraft extends React.Component {
         }
     }
 
-    // XONG , AUTOSAVE 
+    // auto save draft 
     handelAutoSaveDraft = debounce(async () => {
         let draft = this.state.draft
         console.log(draft);
-        await createrService.handelAutoSaveDraft(draft)
+        await serviceDrafts.handelAutoSaveDraft(draft)
     }, 300)
 
-
-    // XONG 
+    // input value 
     handelInputVale = (e, id) => {
 
         let coppyState = { ...this.state }
@@ -155,8 +171,7 @@ class AutoSaveAndUpdateDraft extends React.Component {
 
     }
 
-
-    // XUẤT BẢN 
+    // publish draft 
     handelPublishDraft = async () => {
 
         if (this.state.draft.draftName === null || this.state.draft.draftName === '') {
@@ -175,7 +190,7 @@ class AutoSaveAndUpdateDraft extends React.Component {
         try {
             let draftById = this.state.draft
 
-            let res = await createrService.handelUpdateDraftByID(draftById)
+            let res = await serviceDrafts.handelUpdateDraftByID(draftById)
 
             if (res && res.EC === 0) {
                 toast.success(res.EM)
@@ -189,87 +204,94 @@ class AutoSaveAndUpdateDraft extends React.Component {
 
     render() {
         let { draftLength, draftName, content, bookID } = this.state.draft
-        let { isUpdate, listBook, idBook } = this.state
+        let { isUpdate, listBook, idBook, isLoading } = this.state
 
         return (
             <>
-                <Box sx={{ backgroundColor: 'primary.main', marginBottom: '16px' }}>
-                    <TextField
-                        fullWidth
-                        hiddenLabel
-                        multiline
-                        minRows={18}
-                        margin="normal"
-                        size="small"
-                        id="input-content"
-                        value={content}
-                        color="secondary"
-                        onChange={(e) => this.handelInputVale(e, 'content')}
-                    />
-                </Box>
-
-
-                <Box sx={{ marginBottom: '16px', color: 'primary.sub' }} >
-                    <Typography variant='span'>
-                        {draftLength > 7 ? 'Đã Lưu' : 'Tự Động Lưu'} :
-                    </Typography>
-                    <Typography sx={{ color: 'primary.sub' }} variant='span'>
-                        {draftLength} Từ
-                    </Typography>
-                </Box>
-
-                {isUpdate || (idBook && idBook !== '') ?
+                {isLoading ?
+                    <CsLoading />
+                    :
                     <>
-                        <Box sx={{ marginBottom: '16px ' }}>
+                        <Box sx={{ backgroundColor: 'primary.main', marginBottom: '16px' }}>
                             <TextField
-                                hiddenLabel id="namebook"
-                                placeholder='Tên Chương'
-                                size="small" fullWidth
-                                value={draftName}
+                                fullWidth
+                                hiddenLabel
+                                multiline
+                                minRows={18}
+                                margin="normal"
+                                size="small"
+                                id="input-content"
+                                value={content}
                                 color="secondary"
-                                onChange={(e) => this.handelInputVale(e, 'draftName')}
-
+                                onChange={(e) => this.handelInputVale(e, 'content')}
                             />
                         </Box>
 
-
-                        <Box sx={{ marginBottom: '16px ' }}  >
-                            <FormControl color="secondary" size="small" fullWidth disabled={(idBook ? true : false)}>
-                                <Select
-                                    value={idBook && idBook !== '' ? idBook : bookID}
-                                    onChange={(e) => this.handelInputVale(e, 'bookID')}
-                                    displayEmpty
-                                    inputProps={{ 'aria-label': 'Without label' }}
-                                >
-
-                                    <MenuItem value="0" disabled><em> -- Vui lòng chọn truyện muốn đăng --</em> </MenuItem>
-                                    {listBook && listBook.length > 0 &&
-                                        listBook.map((item, index) => {
-                                            return (
-                                                <MenuItem key={index} value={item.id} >{item.name ? item.name : '[Khuyết Danh]'}</MenuItem>
-                                            )
-                                        })
-                                    }
-
-                                </Select>
-                            </FormControl>
-
+                        <Box sx={{ marginBottom: '16px', color: 'primary.sub' }} >
+                            <Typography variant='span'>
+                                {draftLength > 7 ? 'Đã Lưu' : 'Tự Động Lưu'} :
+                            </Typography>
+                            <Typography sx={{ color: 'primary.sub' }} variant='span'>
+                                {draftLength} Từ
+                            </Typography>
                         </Box>
 
-                        <Box sx={{ marginBottom: '16px ' }}>
-                            <Button fullWidth variant="contained"
-                                color="secondary"
-                                onClick={() => this.handelPublishDraft()}>Xuất Bản
-                            </Button>
-                        </Box>
+                        {isUpdate || (idBook && idBook !== '') ?
+                            <>
+                                <Box sx={{ marginBottom: '16px ' }}>
+                                    <TextField
+                                        hiddenLabel
+                                        placeholder='Tên Chương'
+                                        size="small" fullWidth
+                                        value={draftName}
+                                        color="secondary"
+                                        onChange={(e) => this.handelInputVale(e, 'draftName')}
+
+                                    />
+                                </Box>
+
+
+                                <Box sx={{ marginBottom: '16px ' }}  >
+                                    <FormControl color="secondary" size="small" fullWidth disabled={(idBook ? true : false)}>
+                                        <Select
+                                            value={idBook && idBook !== 0 ? idBook : bookID}
+                                            onChange={(e) => this.handelInputVale(e, 'bookID')}
+                                            displayEmpty
+                                            inputProps={{ 'aria-label': 'Without label' }}
+                                            color="secondary"
+
+                                        >
+
+                                            <MenuItem value="0" disabled><em> -- Vui lòng chọn truyện muốn đăng --</em> </MenuItem>
+                                            {listBook && listBook.length > 0 &&
+                                                listBook.map((item, index) => {
+                                                    return (
+                                                        <MenuItem key={index} value={item.id} >{item.name ? item.name : '[Khuyết Danh]'}</MenuItem>
+                                                    )
+                                                })
+                                            }
+
+                                        </Select>
+                                        
+                                    </FormControl>
+
+                                </Box>
+
+                                <Box sx={{ marginBottom: '16px ' }}>
+                                    <Button fullWidth variant="contained"
+                                        color="secondary"
+                                        onClick={() => this.handelPublishDraft()}>Xuất Bản
+                                    </Button>
+                                </Box>
+                            </>
+
+                            :
+
+                            ""
+
+                        }
                     </>
-
-                    :
-
-                    ""
-
                 }
-
             </>
         )
 
@@ -279,8 +301,7 @@ class AutoSaveAndUpdateDraft extends React.Component {
 
 const mapStateToProps = state => {
     return {
-        creatorID: state.user.userInfo.account.id
-
+        userAccount: state.user.userInfo.account
     };
 };
 

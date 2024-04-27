@@ -44,9 +44,8 @@ class Login extends Component {
                 let token = res.data
                 userLoginSuccess(token)
 
-                // khi render component homeCreator vẫn get được state reudx 
-                // reload lại thì state nhảy sang did-update nên phải href :  
-                window.location.href = '/'
+                this.props.history.push('/')
+
             }
 
         } catch (error) {
@@ -58,7 +57,6 @@ class Login extends Component {
 
     render() {
 
-        console.log(this.state);
         let { email, password } = this.state
 
         return (

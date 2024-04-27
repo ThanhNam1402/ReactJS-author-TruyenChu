@@ -12,7 +12,7 @@ import { EditNote, Clear } from '@mui/icons-material';
 import { toast } from 'react-toastify';
 
 
-import createrService from '../../../services/createrService';
+import serviceDrafts from '../../../services/serviceDrafts';
 
 class Chaters extends React.Component {
 
@@ -34,7 +34,7 @@ class Chaters extends React.Component {
 
     handelGetChapters = async (id) => {
         try {
-            let res = await createrService.handelgetChapterByBookID(id)
+            let res = await serviceDrafts.handelgetChapterByBookID(id)
 
             if (res && res.EC === 0) {
                 let data = res.data
@@ -50,7 +50,7 @@ class Chaters extends React.Component {
 
     handelDelChapter = async (id) => {
 
-        let res = await createrService.handelDelDraft(id)
+        let res = await serviceDrafts.handelDelDraft(id)
 
         if (res && res.EC === 0) {
             toast.success(res.EM)

@@ -39,18 +39,13 @@ const HeaderCreater = () => {
         history.push("/login");
     }
 
-
-    console.log(userInfo);
-
-
-
     return (
         <>
             <Box sx={
                 {
                     display: 'flex',
                     width: '100%',
-                    height: (theme) => theme.creater.navbar,
+                    height: (theme) => theme.creator.navbar,
                     backgroundColor: 'primary.main',
                     justifyContent: 'space-between',
                     alignItems: 'center',

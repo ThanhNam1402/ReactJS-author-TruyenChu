@@ -1,4 +1,4 @@
-import thunkMiddleware from "redux-thunk";
+import thunk from "redux-thunk";
 import { routerMiddleware } from 'connected-react-router';
 
 import { createStore, applyMiddleware } from 'redux';
@@ -14,8 +14,8 @@ export const history = createBrowserHistory({ basename: process.env.REACT_APP_RO
 
 const rootReducer = createRootReducer(history);
 const middleware = [
+    thunk,
     routerMiddleware(history),
-    thunkMiddleware,
 ]
 
 const reduxStore = createStore(

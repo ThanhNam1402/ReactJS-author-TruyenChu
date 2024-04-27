@@ -15,7 +15,7 @@ const userService = {
     },
 
     handelGetAccount(token) {
-        return axios.post(`/api/account`, token);
+        return axios.post(`/api/account`, { token: token });
     },
 
 

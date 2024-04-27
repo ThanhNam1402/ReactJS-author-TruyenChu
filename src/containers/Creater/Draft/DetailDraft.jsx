@@ -1,8 +1,9 @@
 import React, { Component } from "react";
-// import Select from "react-select";
-import createrService from "../../../services/createrService";
-import AutoSaveAndUpdateDraft from "./AutoSaveAndUpdateDraft";
+
 import { Box, Typography } from "@mui/material";
+
+import serviceDrafts from "../../../services/serviceDrafts";
+import AutoSaveAndUpdateDraft from "./AutoSaveAndUpdateDraft";
 
 class DetailDraft extends Component {
   constructor(props) {
@@ -15,11 +16,11 @@ class DetailDraft extends Component {
 
   async componentDidMount() {
     let id = this.props.match.params.id;
-    let data = await createrService.handelgetDraftByID(id);
+    let res = await serviceDrafts.handelgetDraftByID(id);
 
-    if (data && data.EC === 0) {
+    if (res && res.EC === 0) {
       this.setState({
-        dataUpdate: data.data,
+        dataUpdate: res.data,
       });
     }
   }

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import createrService from '../../../services/createrService';
+import serviceBooks from '../../../services/serviceBooks';
 import BookNavigation from './BookNavigate'
 import '../Home.scss';
 
@@ -41,7 +41,7 @@ class EditBook extends Component {
         try {
             let id = this.props.match.params.id
 
-            let res = await createrService.handelgetBookByID(id);
+            let res = await serviceBooks.handelgetBookByID(id);
 
             if (res && res.EC === 0) {
 
@@ -63,7 +63,7 @@ class EditBook extends Component {
                     }
                 })
 
-                this.handelGetAllCode()
+                this.handelGetAllTag()
                 this.handelGetCateGoRy()
 
             } else {
@@ -75,9 +75,9 @@ class EditBook extends Component {
         }
     }
 
-    handelGetAllCode = async () => {
+    handelGetAllTag = async () => {
 
-        let cate = await createrService.handelGetAllCode();
+        let cate = await serviceBooks.handelGetAllTag();
         let data = cate.data.data
         let cateState = ['WORLD', 'SCHOOL', 'POETRY', 'CHARACTER', 'STATE']
 
@@ -93,7 +93,7 @@ class EditBook extends Component {
 
     handelGetCateGoRy = async () => {
         let coppyState = { ...this.state.arrCategory }
-        let cate = await createrService.handelGetCateGoRy();
+        let cate = await serviceBooks.handelGetCateGoRy();
         coppyState = cate.data.data
         this.setState({
             arrCategory: coppyState
@@ -120,7 +120,7 @@ class EditBook extends Component {
         try {
             let id = this.props.match.params.id
             let data = { ...this.state.book, id }
-            let res = await createrService.handelEditBookByID(data)
+            let res = await serviceBooks.handelEditBookByID(data)
 
             if (res && res.EC === 0) {
                 toast.success(res.EM);
@@ -253,7 +253,7 @@ class EditBook extends Component {
                                         }}>
                                             <img
                                                 src="https://i.pinimg.com/564x/d1/41/46/d141468babca1416a378c62f49d4aa38.jpg"
-                                                class="img-book-add rounded-top"
+                                                className="img-book-add rounded-top"
                                                 alt="img-book"
                                             />
                                         </div>

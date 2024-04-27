@@ -12,20 +12,14 @@ import Login from '../containers/Auth/Login';
 
 import './App.scss';
 
-
 import '../components/CustomToast.scss';
 import { CustomToastCloseButton } from '../components/CustomToast';
 
 class App extends Component {
-
-  
-
     render() {
         return (
             <>
                 <Router history={history}>
-
-
                     <div className="main-container">
                         <Switch>
                             <Route path={path.LOGIN} component={(Login)} />

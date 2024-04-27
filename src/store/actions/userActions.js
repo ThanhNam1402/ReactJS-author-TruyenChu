@@ -1,5 +1,4 @@
 import actionTypes from './actionTypes';
-
 import userService from '../../services/userService';
 
 export const userLoginSuccess = (token) => ({
@@ -15,9 +14,6 @@ export const saveTokenUser = (token) => ({
 export const getAccountUser = (token) => {
     return async (dispatch, getState) => {
         try {
-
-            console.log("token", token);
-
             let res = await userService.handelGetAccount(token)
             console.log("res", res);
 

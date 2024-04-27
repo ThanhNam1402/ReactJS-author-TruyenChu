@@ -25,7 +25,7 @@ class NavCreater extends Component {
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'space-between',
-                        height: (theme) => theme.creater.navbar
+                        height: (theme) => theme.creator.navbar
                     }} >
                         <NavLink exact to="/" className="text-nowrap logo-img">
                             <img src={logo} height="60px" alt="a" />
@@ -45,7 +45,7 @@ class NavCreater extends Component {
                                 </Typography>
                             </li>
                             <li className="sidebar-item">
-                                <NavLink className="sidebar-link" exact to="/creater/drafts/new">
+                                <NavLink className="sidebar-link" exact to="/creator/drafts/new">
                                     <NoteAdd sx={{ color: 'primary.sub' }} />
 
                                     <Typography sx={{ color: 'primary.sub' }} variant="span" >
@@ -54,7 +54,7 @@ class NavCreater extends Component {
                                 </NavLink>
                             </li>
                             <li className="sidebar-item">
-                                <NavLink className="sidebar-link" exact to="/creater/drafts">
+                                <NavLink className="sidebar-link" exact to="/creator/drafts">
                                     <Description sx={{ color: 'primary.sub' }} />
                                     <Typography sx={{ color: 'primary.sub' }} variant="span" >
                                         Các Bản Thảo
@@ -73,7 +73,7 @@ class NavCreater extends Component {
                                 </Typography>
                             </li>
                             <li className="sidebar-item">
-                                <NavLink className="sidebar-link" exact to="/creater/book/new">
+                                <NavLink className="sidebar-link" exact to="/creator/book/new">
                                     <AddBoxOutlined sx={{ color: 'primary.sub' }} />
                                     <Typography sx={{ color: 'primary.sub' }} variant="span" >
                                         Thêm Truyện
@@ -81,7 +81,7 @@ class NavCreater extends Component {
                                 </NavLink>
                             </li>
                             <li className="sidebar-item">
-                                <NavLink className="sidebar-link" exact to="/creater/books">
+                                <NavLink className="sidebar-link" exact to="/creator/books">
                                     <LibraryBooksOutlined sx={{ color: 'primary.sub' }} />
                                     <Typography sx={{ color: 'primary.sub' }} variant="span" >
                                         Truyện Của Tôi
@@ -101,7 +101,7 @@ class NavCreater extends Component {
 
                             </li>
                             <li className="sidebar-item">
-                                <NavLink className="sidebar-link" exact to="/creater/knowledge-base">
+                                <NavLink className="sidebar-link" exact to="/creator/knowledge-base">
                                     <Typography sx={{ color: 'primary.sub' }} variant="span" >
                                         Kiến Thức Cơ Bản
                                     </Typography>
@@ -109,7 +109,7 @@ class NavCreater extends Component {
 
                             </li>
                             <li className="sidebar-item">
-                                <NavLink className="sidebar-link" exact to="/creater/help">
+                                <NavLink className="sidebar-link" exact to="/creator/help">
                                     <Typography sx={{ color: 'primary.sub' }} variant="span" >
                                         Yêu Cầu Hỗ Trợ
                                     </Typography>

@@ -1,19 +1,17 @@
 import React from 'react';
-import createrService from '../../../services/createrService';
 import Moment from 'moment';
 import { connect } from 'react-redux';
-
-import '../Home.scss';
 import { toast } from 'react-toastify';
 import { Link } from 'react-router-dom';
-
 import { Typography, Box, Card, CardContent, Chip, Tooltip } from '@mui/material';
 import { Clear, EditNote } from '@mui/icons-material';
 import { Link as CusTomLinkIcon } from "@mui/icons-material";
 import IconButton from '@mui/material/IconButton';
 
-
+import serviceDrafts from '../../../services/serviceDrafts';
 import CsLoading from '../../../components/CsLoading';
+import '../Home.scss';
+
 
 class Draft extends React.Component {
     constructor(props) {
@@ -36,9 +34,9 @@ class Draft extends React.Component {
             this.setState({ isLoading: true })
             await new Promise(resolve => setTimeout(resolve, 500));
 
-            let creatorID = this.props.creatorID
+            let creatorID = this.props.userAccount.id
 
-            const res = await createrService.handelgetDrafts(creatorID);
+            const res = await serviceDrafts.handelgetDrafts(creatorID);
 
             if (res && res.EC === 0) {
                 let coppyState = { ...this.state }
@@ -60,7 +58,7 @@ class Draft extends React.Component {
 
     handelDelDraft = async (id) => {
 
-        let res = await createrService.handelDelDraft(id)
+        let res = await serviceDrafts.handelDelDraft(id)
         if (res && res.EC === 0) {
             toast.success(res.EM)
             this.getDrafts()
@@ -70,7 +68,6 @@ class Draft extends React.Component {
     render() {
 
         let { listDraft, isLoading } = this.state
-
         return (
             <>
                 <Box>
@@ -94,7 +91,7 @@ class Draft extends React.Component {
                                         <CardContent sx={{
                                             ml: '4px'
                                         }} >
-                                            <Link to={`/creater/drafts/edit/${item.id}`}>
+                                            <Link to={`/creator/drafts/edit/${item.id}`}>
                                                 <Typography sx={{ color: 'primary.sub', fontWeight: 'bold' }} variant='span' >
                                                     {item.draftName ? item.draftName : '[Khuyet Danh]'}
                                                 </Typography>
@@ -104,7 +101,7 @@ class Draft extends React.Component {
                                             </Typography>
 
                                             {item.bookName ?
-                                                <Link to={`/creater/book/${item["Book.id"]}/chapters/`}>
+                                                <Link to={`/creator/book/${item.bookID}/chapters/`}>
                                                     <Chip
                                                         className="text-white"
                                                         label={item.bookName}
@@ -115,7 +112,6 @@ class Draft extends React.Component {
                                                     />
                                                 </Link>
                                                 : ''
-
                                             }
 
                                             <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mt: '16px', fontSize: '12px' }} >
@@ -127,7 +123,7 @@ class Draft extends React.Component {
                                                     display: 'flex',
                                                     alignItems: 'center',
                                                 }}>
-                                                    <Link to={`/creater/drafts/edit/${item.id}`} className="draft-link-edit" >
+                                                    <Link to={`/creator/drafts/edit/${item.id}`} className="draft-link-edit" >
                                                         <IconButton>
                                                             <Tooltip title="Chỉnh Sửa">
                                                                 <EditNote
@@ -170,8 +166,7 @@ class Draft extends React.Component {
 
 const mapStateToProps = state => {
     return {
-        creatorID: state.user.userInfo.account.id
-
+        userAccount: state.user.userInfo.account
     };
 };
 

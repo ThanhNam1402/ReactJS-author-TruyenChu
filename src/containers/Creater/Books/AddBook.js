@@ -1,12 +1,11 @@
 import React, { Component } from 'react';
-import createrService from '../../../services/createrService';
-import SelectCateBook from './SelectCateBook'
-
 import { connect } from 'react-redux';
 import { toast } from 'react-toastify';
 import { Box, Typography, Card, CardContent, Checkbox, FormControlLabel, TextField, InputLabel, Button } from '@mui/material';
 
-import '../Home.scss';
+import serviceBooks from '../../../services/serviceBooks';
+import SelectCateBook from './SelectCateBook'
+
 import './Book.scss';
 
 class AddBook extends Component {
@@ -35,21 +34,21 @@ class AddBook extends Component {
 
     componentDidMount() {
         this.handelGetCateGoRy()
-        this.handelGetAllCode()
+        this.handelGetAllTag()
     }
 
     handelGetCateGoRy = async () => {
         let coppyState = { ...this.state.arrCategory }
-        let cate = await createrService.handelGetCateGoRy();
+        let cate = await serviceBooks.handelGetCateGoRy();
         coppyState = cate.data.data
         this.setState({
             arrCategory: coppyState
         })
     }
 
-    handelGetAllCode = async () => {
+    handelGetAllTag = async () => {
 
-        let cate = await createrService.handelGetAllCode();
+        let cate = await serviceBooks.handelGetAllTag();
         let data = cate.data.data
 
         let cateState = ['WORLD', 'SCHOOL', 'POETRY', 'CHARACTER']
@@ -86,11 +85,13 @@ class AddBook extends Component {
             return toast.error('Vui Lòng Đồng ý Với Chính Sách  !!')
 
         }
-        let creatorID = this.props.creatorID
+
+        let creatorID = this.props.userAccount.id
+
         let newBook = {
             ...this.state.newBook, creatorID
         }
-        let data = await createrService.handelAddBook(newBook);
+        let data = await serviceBooks.handelAddBook(newBook);
 
         console.log(data);
 
@@ -230,8 +231,7 @@ class AddBook extends Component {
 
 const mapStateToProps = state => {
     return {
-        creatorID: state.user.userInfo.account.id
-
+        userAccount: state.user.userInfo.account
     };
 };
 

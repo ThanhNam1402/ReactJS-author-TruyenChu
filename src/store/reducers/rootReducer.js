@@ -18,7 +18,9 @@ const userPersistConfig = {
     whitelist: ['isLoginRedux', 'userInfo']
 };
 
-export default (history) => combineReducers({
-    router: connectRouter(history),
+const createRootReducer = (history) => combineReducers({
     user: persistReducer(userPersistConfig, userReducer),
+    router: connectRouter(history),
 })
+
+export default createRootReducer 

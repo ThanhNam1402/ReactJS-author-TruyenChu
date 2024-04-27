@@ -1,7 +1,7 @@
 
 
 import React from 'react';
-import createrService from '../../../services/createrService';
+import serviceDrafts from '../../../services/serviceDrafts';
 
 import { Box, Button, InputLabel, TextField } from '@mui/material';
 
@@ -20,7 +20,7 @@ class EditChapter extends React.Component {
     async componentDidMount() {
         let id = this.props.match.params.id
 
-        let res = await createrService.handelgetDraftByID(id)
+        let res = await serviceDrafts.handelgetDraftByID(id)
         let data = res.data;
 
         console.log(res.data);
@@ -47,7 +47,7 @@ class EditChapter extends React.Component {
             let data = { ...this.state, id }
 
             console.log(data);
-            let res = await createrService.handelEditChapter(data)
+            let res = await serviceDrafts.handelEditChapter(data)
 
             if (res && res.EC === 0) {
                 toast.success(res.EM);

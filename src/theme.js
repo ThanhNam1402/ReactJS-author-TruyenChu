@@ -1,7 +1,7 @@
 import { experimental_extendTheme as extendTheme } from '@mui/material/styles';
 
 const theme = extendTheme({
-    creater: {
+    creator: {
         navbar: '64px'
     },
 

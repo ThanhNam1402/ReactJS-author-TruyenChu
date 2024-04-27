@@ -4,9 +4,7 @@
     margin-bottom: 0.125rem;
 }
 
-
 .bookDescription {
-
     input,
     textarea {
         &::placeholder {
@@ -18,13 +16,8 @@
             &::placeholder {
                 transform: translateX(3px) !important;
             }
-
         }
     }
-
-
-
-
 }
 
 
@@ -63,12 +56,10 @@
     }
 }
 
-
 .lable-input {
     margin-bottom: 0.5rem;
     font-size: 0.875rem;
 }
-
 
 .img-book-add {
     width: 100%;
