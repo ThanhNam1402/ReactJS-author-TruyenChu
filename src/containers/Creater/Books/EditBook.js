@@ -1,12 +1,13 @@
 import React, { Component } from 'react';
-import serviceBooks from '../../../services/serviceBooks';
-import BookNavigation from './BookNavigate'
-import '../Home.scss';
-
 import { toast } from 'react-toastify';
-
-import SelectCateBook from './SelectCateBook';
 import { Card, CardContent, Box, Button, Typography, InputLabel, TextField, Grid } from '@mui/material';
+
+import serviceBooks from '../../../services/booksService';
+import CsLoading from '../../../components/CsLoading';
+import SelectCateBook from './SelectCateBook';
+import BookNavigation from './BookNavigate'
+import { delay } from '../../../utils';
+import '../Home.scss';
 
 
 
@@ -21,7 +22,7 @@ class EditBook extends Component {
             STATE: [],
             arrCategory: [],
             checkBox: true,
-            isLoading: true,
+            isLoading: false,
 
             book: {
                 name: '',
@@ -38,36 +39,38 @@ class EditBook extends Component {
     }
 
     async componentDidMount() {
+
+        this.handleGetAllTag()
+        this.handleGetCateGoRy()
+        this.handleGetBook()
+    }
+
+    handleGetBook = async () => {
         try {
+            this.setState({ isLoading: true })
+            await delay(1000)
+
             let id = this.props.match.params.id
+            let res = await serviceBooks.handleGetOneBook(id);
 
-            let res = await serviceBooks.handelgetBookByID(id);
-
-            if (res && res.EC === 0) {
-
+            if (res && res.success === true) {
                 let data = res.data
-
-
-                console.log(data);
 
                 this.setState({
                     book: {
-                        bookPoetry: data.poetry,
                         name: data.name,
+                        bookPoetry: data.poetry,
                         bookSchool: data.school,
                         bookWorld: data.world,
                         bookState: data.state,
                         categoryID: data.categoryID,
                         bookChar: data.character,
                         content: data.content
-                    }
+                    },
+                    isLoading: false
                 })
-
-                this.handelGetAllTag()
-                this.handelGetCateGoRy()
-
             } else {
-                console.log('Not foound Book ??? ');
+                toast.error(res.message)
             }
 
         } catch (error) {
@@ -75,26 +78,28 @@ class EditBook extends Component {
         }
     }
 
-    handelGetAllTag = async () => {
+    handleGetAllTag = async () => {
+        try {
+            let res = await serviceBooks.handleGetAllTag();
+            let data = res.data
+            let cateState = ['WORLD', 'SCHOOL', 'POETRY', 'CHARACTER', 'STATE']
 
-        let cate = await serviceBooks.handelGetAllTag();
-        let data = cate.data.data
-        let cateState = ['WORLD', 'SCHOOL', 'POETRY', 'CHARACTER', 'STATE']
+            const result = cateState.reduce((acc, type) => {
+                const items = data.filter(item => item.type === type);
+                acc[type] = items;
+                return acc;
+            }, {});
 
-        const result = cateState.reduce((acc, type) => {
-            const items = data.filter(item => item.type === type);
-            acc[type] = items;
-            return acc;
-        }, {});
-
-        this.setState(result);
-
+            this.setState(result);
+        } catch (error) {
+            console.log(error);
+        }
     }
 
-    handelGetCateGoRy = async () => {
+    handleGetCateGoRy = async () => {
         let coppyState = { ...this.state.arrCategory }
-        let cate = await serviceBooks.handelGetCateGoRy();
-        coppyState = cate.data.data
+        let cate = await serviceBooks.handleGetCateGoRy();
+        coppyState = cate.data
         this.setState({
             arrCategory: coppyState
         })
@@ -108,24 +113,17 @@ class EditBook extends Component {
     }
 
 
-    handelOnchangeInputImg = (e) => {
-        const file = e.target.files[0];
-
-        console.log(file);
-    }
-
 
     handelEditBook = async () => {
-
         try {
             let id = this.props.match.params.id
             let data = { ...this.state.book, id }
-            let res = await serviceBooks.handelEditBookByID(data)
+            let res = await serviceBooks.handleUpdateBook(data)
 
-            if (res && res.EC === 0) {
-                toast.success(res.EM);
+            if (res && res.success === true) {
+                toast.success(res.message);
             } else {
-                toast.error(res.EM);
+                toast.error(res.message);
             }
 
         } catch (error) {
@@ -135,30 +133,26 @@ class EditBook extends Component {
 
     render() {
 
-        let { WORLD, SCHOOL, POETRY, CHARACTER, STATE, arrCategory } = this.state;
+        let { WORLD, SCHOOL, POETRY, CHARACTER, STATE, arrCategory, isLoading } = this.state;
         let { content, name, bookPoetry, bookSchool, bookState, bookChar, bookWorld, categoryID } = this.state.book
-
-        console.log(this.state.book);
 
         return (
             <>
+                <div>
+                    <Typography sx={{ fontSize: '20px', fontWeight: '500', color: 'primary.sub', mb: '24px' }} variant='h4'>
+                        Chỉnh Sửa
+                    </Typography>
+                </div>
+                <BookNavigation
+                    id={this.props.match.params.id}
+                />
 
-                <>
-                    <Box>
-                        <Typography sx={{ fontSize: '20px', fontWeight: '500', color: 'primary.sub' }} variant='h4'>
-                            Chỉnh Sửa
-                        </Typography>
-                        <Typography sx={{ color: 'primary.sub', marginBottom: '24px' }} variant='p' component='p'>
-                            {name ? name : ''}
-                        </Typography>
-                    </Box>
-                    <BookNavigation
-                        id={this.props.match.params.id}
-                    />
+                {isLoading ?
 
+                    <CsLoading />
+                    :
                     <Card >
                         <CardContent >
-
                             <Box sx={{ mb: '16px' }} >
                                 <InputLabel id="namebook" className="lable-input">Tên Truyện</InputLabel>
                                 <TextField
@@ -180,8 +174,7 @@ class EditBook extends Component {
                                     fullWidth hiddenLabel
                                     color="secondary"
                                     sx={{ backgroundColor: 'primary.main', }}
-                                    multiline
-                                    minRows={6}
+                                    multiline minRows={6}
                                     placeholder='Tóm tắt cho truyện không nên quá dài mà nên ngắn gọn, Tập trung, thú vị. Phần này rất quan trọng vì nó quyết định độc giả có đọc hay không. Tối đa 700 từ'
                                     id="input-content" size="small"
                                     onChange={(e) => this.handelInputVale(e, 'content')}
@@ -189,9 +182,7 @@ class EditBook extends Component {
                                 />
                             </Box>
 
-                            <Grid container sx={{
-                                marginBottom: '30px'
-                            }} spacing={2}>
+                            <Grid container sx={{ mb: '30px' }} spacing={2}>
                                 <Grid item xs={6}>
 
                                     <SelectCateBook
@@ -285,27 +276,21 @@ class EditBook extends Component {
                                             </Typography>
                                             <Typography variant="p" component="p">
                                                 Lưu ý: file ảnh không nặng quá 2MB. Đừng lo lắng nếu không tìm được ảnh bìa ưng ý, chúng tôi sẽ hỗ trợ làm giúp bạn ảnh bìa đẹp khi truyện được xuất bản
-
                                             </Typography>
                                         </Box>
-
-
                                     </Box>
                                 </Grid>
                             </Grid>
 
-
-
                             <Box sx={{ marginBottom: '16px ' }}>
-                                <Button variant="contained" color='secondary' sx={{ width: '100%', color: 'primary.main' }} onClick={() => this.handelEditBook()} >
-                                    {!this.state.isLoading ? <i className="fas fa-spinner fa-spin"></i> : "Cập Nhật"}
+                                <Button variant="contained" color='secondary' fullWidth onClick={() => this.handelEditBook()} >
+                                    Cập Nhật
                                 </Button>
                             </Box>
                         </CardContent>
                     </Card>
-                </>
+                }
             </>
-
         )
 
     }

@@ -1,7 +1,7 @@
 
 
 import React from 'react';
-import serviceDrafts from '../../../services/serviceDrafts';
+import draftsService from '../../../services/draftsService';
 
 import { Box, Button, InputLabel, TextField } from '@mui/material';
 
@@ -20,7 +20,7 @@ class EditChapter extends React.Component {
     async componentDidMount() {
         let id = this.props.match.params.id
 
-        let res = await serviceDrafts.handelgetDraftByID(id)
+        let res = await draftsService.handelGetOneDraft(id)
         let data = res.data;
 
         console.log(res.data);
@@ -41,21 +41,21 @@ class EditChapter extends React.Component {
 
     }
 
-    handelEditChapter = async () => {
+    handleUpdateChapter = async () => {
         try {
             let id = this.props.match.params.id
             let data = { ...this.state, id }
 
             console.log(data);
-            let res = await serviceDrafts.handelEditChapter(data)
+            let res = await draftsService.handleUpdateChapter(data)
 
-            if (res && res.EC === 0) {
-                toast.success(res.EM);
+            if (res && res.success === true) {
+                toast.success(res.message);
 
-                this.props.history.push(`/creater/book/${this.state.bookID}/chapters`)
+                this.props.history.push(`/creator/book/${this.state.bookID}/chapters`)
 
             } else {
-                toast.error(res.EM);
+                toast.error(res.message);
             }
 
         } catch (error) {
@@ -107,7 +107,7 @@ class EditChapter extends React.Component {
                 </Box>
 
                 <Button variant="contained"
-                    onClick={() => this.handelEditChapter()}
+                    onClick={() => this.handleUpdateChapter()}
                     sx={{
                         width: '100%',
                         backgroundColor: 'secondary.main'

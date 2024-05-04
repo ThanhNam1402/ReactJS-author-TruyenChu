@@ -11,34 +11,12 @@ const userService = {
     },
 
     handleRefreshToken(refreshToken) {
-        return axios.post(`/api/refreshToken?token=${refreshToken}`);
+        return axios.post(`/api/refresh?token=${refreshToken}`);
     },
 
     handelGetAccount(token) {
-        return axios.post(`/api/account`, { token: token });
+        return axios.post(`/api/me`, { token: token });
     },
-
-
-    handelGetAllUser() {
-        return axios.get(`/api/getAllUser`)
-    },
-    handelCreateUser(data) {
-        return axios.post(`/api/createUser`, data)
-    },
-    handelUpdateUser(data) {
-        return axios.put(`/api/editUser`, data)
-    },
-    handelGetAllCode(type) {
-        return axios.get(`/api/getAllCode/?type=${type}`)
-    },
-
-    handelDelUser(id) {
-        return axios.delete('/api/delUser', {
-            data: {
-                id: id
-            }
-        });
-    }
 
 };
 

@@ -8,7 +8,6 @@ import actionTypes from './store/actions/actionTypes';
 import * as actions from "./store/actions"
 
 import { createBrowserHistory } from 'history';
-const history = createBrowserHistory();
 
 
 const instance = axios.create({
@@ -16,28 +15,41 @@ const instance = axios.create({
     withCredentials: true
 });
 
+instance.interceptors.request.use((config) => {
+
+    const currentState = store.getState()
+    const token = currentState.user?.userInfo?.token?.token;
+
+    if (!config.headers["Authorization"]) {
+        console.log('no authorization header', token);
+
+        config.headers["Authorization"] = `Bearer ${token}`;
+
+    }
+
+    return config;
+
+}, function (error) {
+    // Do something with request error
+    return Promise.reject(error);
+});
+
 instance.interceptors.response.use(
     (response) => {
+
         return response.data;
+
     }, async (error) => {
         if (error.response) {
-            console.log('xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx');
-            // console.log(error.response);
-            // console.log(error.response.data);
-            // console.log(error.response.status);
-            // console.log(error.response.headers);
+            console.log(error.response);
 
             if (error.response.status === 401) {
                 const originalRequest = error.config;
                 const currentState = store.getState()
-                const refreshToken = currentState.user.userInfo.token.refresh_token;
+                const refreshToken = currentState.user?.userInfo?.token?.refresh_token;
 
 
-                if (
-                    error.response.status === 401 &&
-                    originalRequest.url === `/api/refresh-token/`
-                ) {
-                    // history.push('/login');
+                if (error.response.status === 401 && originalRequest.url === `/api/refresh/`) {
                     window.location.href = '/login'
                     return Promise.reject(error);
                 }
@@ -54,19 +66,20 @@ instance.interceptors.response.use(
                             type: actionTypes.REFRESH_TOKEN_REQUEST,
                         });
 
-                        let res = await instance.post(`/api/refreshToken?token=${refreshToken}`)
+                        let res = await instance.post(`/api/refresh?token=${refreshToken}`)
 
-                        if (res && res.EC === 0) {
+                        if (res && res.success === true) {
 
                             await store.dispatch(actions.refreshTokenSuccess(res.data))
 
+                            console.log("token refresh: ", refreshToken);
 
-                            // token header => lastest
-                            // now query? 
-                            // instance.defaults.headers.common['x-auth-token'] = res.data.token;
-                            // originalRequest.headers['x-auth-token'] = res.data.token;
+                            axios.defaults.headers.common['Authorization'] = `Bearer ${res.data.token}`
+                            originalRequest.headers['Authorization'] = `Bearer ${res.data.token}`;
 
                             error.response.config.data = { token: res.data.token }
+
+                            console.log(error.response);
 
                             return instance(error.config)
                         } else {

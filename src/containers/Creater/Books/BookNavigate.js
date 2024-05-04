@@ -5,11 +5,8 @@ import { Box, Typography } from '@mui/material';
 import './Book.scss'
 
 class BookNavigation extends React.Component {
-
-
     render() {
         let { id } = this.props
-
         return (
             <>
                 <Box sx={{
@@ -20,21 +17,16 @@ class BookNavigation extends React.Component {
 
                 }} className='book-navigate'>
                     <NavLink className='book-navi-item' to={`/creator/book/edit/${id}`}>
-                        <Typography sx={{ color: 'primary.sub' }} component={'span'}>Chỉnh Sửa</Typography>
+                        <Typography sx={{ color: 'primary.sub' }} component='span'>Chỉnh Sửa</Typography>
                     </NavLink>
 
                     <NavLink className='book-navi-item' to={`/creator/book/${id}/chapters`}>
-
-                        <Typography sx={{ color: 'primary.sub' }} component={'span'}> Danh Sách Chương</Typography>
+                        <Typography sx={{ color: 'primary.sub' }} component='span'> Danh Sách Chương</Typography>
                     </NavLink>
                 </Box>
             </>
         )
-
     }
-
-
-
 }
 
 

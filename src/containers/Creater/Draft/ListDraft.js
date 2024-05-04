@@ -8,8 +8,9 @@ import { Clear, EditNote } from '@mui/icons-material';
 import { Link as CusTomLinkIcon } from "@mui/icons-material";
 import IconButton from '@mui/material/IconButton';
 
-import serviceDrafts from '../../../services/serviceDrafts';
+import draftsService from '../../../services/draftsService';
 import CsLoading from '../../../components/CsLoading';
+import { delay } from '../../../utils';
 import '../Home.scss';
 
 
@@ -28,17 +29,16 @@ class Draft extends React.Component {
 
 
     getDrafts = async () => {
-
         try {
-
             this.setState({ isLoading: true })
-            await new Promise(resolve => setTimeout(resolve, 500));
+
+            await delay(1000)
 
             let creatorID = this.props.userAccount.id
 
-            const res = await serviceDrafts.handelgetDrafts(creatorID);
+            const res = await draftsService.handlegetAllDrafts(creatorID);
 
-            if (res && res.EC === 0) {
+            if (res && res.success === true) {
                 let coppyState = { ...this.state }
                 coppyState.listDraft = res.data
                 coppyState.isLoading = false
@@ -51,16 +51,15 @@ class Draft extends React.Component {
 
 
         } catch (e) {
-            console.log(e);
             this.setState({ loading: false });
         }
     }
 
-    handelDelDraft = async (id) => {
+    handleDelDraft = async (id) => {
 
-        let res = await serviceDrafts.handelDelDraft(id)
-        if (res && res.EC === 0) {
-            toast.success(res.EM)
+        let res = await draftsService.handleDelDraft(id)
+        if (res && res.success === true) {
+            toast.success(res.message)
             this.getDrafts()
         }
     }
@@ -134,7 +133,7 @@ class Draft extends React.Component {
                                                         </IconButton>
                                                     </Link>
 
-                                                    <span onClick={() => this.handelDelDraft(item.id)}>
+                                                    <span onClick={() => this.handleDelDraft(item.id)}>
                                                         <IconButton>
                                                             <Tooltip title="Xóa">
                                                                 <Clear

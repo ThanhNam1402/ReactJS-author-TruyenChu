@@ -5,7 +5,7 @@ import { CardContent, Card, ListItem, List, ListItemButton, Box, Typography } fr
 import { RadioButtonUnchecked } from '@mui/icons-material';
 import { Link } from "react-router-dom";
 
-import createrService from "../../../services/createrService";
+import topicsService from "../../../services/topicsService";
 import './HomePage.scss'
 
 import { delay } from "../../../utils";
@@ -34,8 +34,8 @@ class HomeCreaterPage extends React.Component {
             this.setState({ isLoading: true })
             await delay(1000)
 
-            let res = await createrService.handelgetToppic()
-            if (res && res.EC === 0) {
+            let res = await topicsService.handlegetAllTopics()
+            if (res && res.success === true) {
                 this.setState({
                     isLoading: false,
                     listTopic: res.data ? res.data : []
@@ -68,7 +68,7 @@ class HomeCreaterPage extends React.Component {
                                         listTopic.map((item, index) => {
                                             return (
                                                 <ListItem key={index} disablePadding>
-                                                    <Link to={`/creater/topic/${item.slug}`} className='new-item'>
+                                                    <Link to={`/creator/topic/${item.slug}`} className='new-item'>
                                                         <ListItemButton >
                                                             <RadioButtonUnchecked sx={{ mr: '16px', color: 'primary.sub', }}
                                                                 fontSize="small"

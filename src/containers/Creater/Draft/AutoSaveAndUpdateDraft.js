@@ -5,8 +5,8 @@ import { connect } from 'react-redux';
 import { Box, Button, Typography, MenuItem, FormControl, Select, TextField } from '@mui/material';
 
 
-import serviceDrafts from '../../../services/serviceDrafts';
-import serviceBooks from '../../../services/serviceBooks';
+import draftsService from '../../../services/draftsService';
+import booksService from '../../../services/booksService';
 import './draft.scss';
 import CsLoading from '../../../components/CsLoading';
 import { delay } from '../../../utils';
@@ -19,12 +19,11 @@ class AutoSaveAndUpdateDraft extends React.Component {
             idBook: '',
             listBook: [],
             draft: {
-                bookID: '0',
-                content: '',
-                draftName: '',
+                bookID: "",
+                content: "",
+                draftName: "",
                 draftLength: 0,
                 id: "",
-                userID: ''
             },
             isUpdate: false,
             isCreate: false,
@@ -32,14 +31,15 @@ class AutoSaveAndUpdateDraft extends React.Component {
         }
     }
 
+
+    // draft: {
+    //     userID: this.props.userAccount.id
+    // }
     async componentDidMount() {
 
         if (this.props.isAdd && this.props.isAdd === true) {
             this.setState({
                 isCreate: true,
-                draft: {
-                    userID: this.props.userAccount.id
-                }
             })
         }
 
@@ -55,23 +55,18 @@ class AutoSaveAndUpdateDraft extends React.Component {
 
     // get book 
     handelGetBook = async () => {
-
         try {
-
-            await delay(1000);
             this.setState({ isLoading: true })
+            await delay(1000);
 
             let creatorID = this.props.userAccount.id
 
-            console.log("creatorID", creatorID);
-            let res = await serviceBooks.handelgetBooks(creatorID);
-            if (res && res.EC === 0) {
+            let res = await booksService.handlegetAllBooks(creatorID);
+            if (res && res.success === true) {
                 let coppyState = { ...this.state }
                 coppyState.listBook = res.data
+
                 this.setState({ ...coppyState, isLoading: false })
-
-
-                console.log(this.state);
             }
         } catch (error) {
             console.log(error);
@@ -90,7 +85,6 @@ class AutoSaveAndUpdateDraft extends React.Component {
 
         }
 
-        // XONG
         // CHỈNH SỬA , SETSTATE KHI CẬP NHẬT DRAFT 
         if (prevProps.dataUpdate !== this.props.dataUpdate) {
             this.setState({
@@ -106,8 +100,8 @@ class AutoSaveAndUpdateDraft extends React.Component {
                     draftLength: dataUpdate.content.split(" ").length,
                     draftName: dataUpdate.draftName,
                     id: dataUpdate.id,
-                    bookID: dataUpdate.bookID ? dataUpdate.bookID : 0,
-                    userID: 1
+                    bookID: dataUpdate.bookID ? dataUpdate.bookID : "",
+                    userID: dataUpdate.userID
                 }
             })
             this.setState({
@@ -115,8 +109,12 @@ class AutoSaveAndUpdateDraft extends React.Component {
             })
         }
 
-        // XONG, create a new draft
+        //  create a new draft
         if (this.state.isCreate === true && this.state.draft.draftLength > 7) {
+
+            console.log("this.props mount ", this.props);
+
+
             this.handelCreateDraft()
             this.setState({
                 isUpdate: true,
@@ -126,7 +124,7 @@ class AutoSaveAndUpdateDraft extends React.Component {
 
         // XONG, auto save khi lenght > 10 và không thể xóa hết các các chữ trong draft 
         if (this.state.isUpdate === true && this.state.draft.draftLength > 10) {
-            this.handelAutoSaveDraft()
+            this.handleUpdateDraft()
         }
 
     }
@@ -135,15 +133,17 @@ class AutoSaveAndUpdateDraft extends React.Component {
     handelCreateDraft = async () => {
         if (this.state.draft.draftLength > 6) {
 
-            let draft = this.state.draft
-            let data = await serviceDrafts.handelCreateDrafft(draft)
+            let userID = this.props.userAccount.id;
+            let newDraft = { ...this.state.draft, userID }
+
+            let data = await draftsService.handleAddDraft(newDraft)
 
 
-            if (data && data.EC !== 0) {
+            if (data && data.success !== true) {
                 return toast.error(data.message)
             }
 
-            if (data && data.EC === 0) {
+            if (data && data.success === true) {
                 let coppyState = { ...this.state }
                 coppyState.draft.id = data.data.id
                 this.setState({ ...coppyState })
@@ -153,10 +153,12 @@ class AutoSaveAndUpdateDraft extends React.Component {
     }
 
     // auto save draft 
-    handelAutoSaveDraft = debounce(async () => {
+    handleUpdateDraft = debounce(async () => {
         let draft = this.state.draft
         console.log(draft);
-        await serviceDrafts.handelAutoSaveDraft(draft)
+        let res = await draftsService.handleUpdateDraft(draft)
+
+        console.log(res);
     }, 300)
 
     // input value 
@@ -172,7 +174,7 @@ class AutoSaveAndUpdateDraft extends React.Component {
     }
 
     // publish draft 
-    handelPublishDraft = async () => {
+    handelPublicDraft = async () => {
 
         if (this.state.draft.draftName === null || this.state.draft.draftName === '') {
             toast.error('Vui Lòng Đặt Tên Chương')
@@ -190,10 +192,10 @@ class AutoSaveAndUpdateDraft extends React.Component {
         try {
             let draftById = this.state.draft
 
-            let res = await serviceDrafts.handelUpdateDraftByID(draftById)
+            let res = await draftsService.handlePublish(draftById)
 
-            if (res && res.EC === 0) {
-                toast.success(res.EM)
+            if (res && res.success === true) {
+                toast.success(res.message)
             }
 
         } catch (error) {
@@ -262,7 +264,7 @@ class AutoSaveAndUpdateDraft extends React.Component {
 
                                         >
 
-                                            <MenuItem value="0" disabled><em> -- Vui lòng chọn truyện muốn đăng --</em> </MenuItem>
+                                            <MenuItem value="" disabled><em> -- Vui lòng chọn truyện muốn đăng --</em> </MenuItem>
                                             {listBook && listBook.length > 0 &&
                                                 listBook.map((item, index) => {
                                                     return (
@@ -272,7 +274,7 @@ class AutoSaveAndUpdateDraft extends React.Component {
                                             }
 
                                         </Select>
-                                        
+
                                     </FormControl>
 
                                 </Box>
@@ -280,7 +282,7 @@ class AutoSaveAndUpdateDraft extends React.Component {
                                 <Box sx={{ marginBottom: '16px ' }}>
                                     <Button fullWidth variant="contained"
                                         color="secondary"
-                                        onClick={() => this.handelPublishDraft()}>Xuất Bản
+                                        onClick={() => this.handelPublicDraft()}>Xuất Bản
                                     </Button>
                                 </Box>
                             </>

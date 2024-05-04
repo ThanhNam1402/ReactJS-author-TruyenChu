@@ -2,7 +2,7 @@ import React, { Component } from "react";
 
 import { Box, Typography } from "@mui/material";
 
-import serviceDrafts from "../../../services/serviceDrafts";
+import draftsService from "../../../services/draftsService";
 import AutoSaveAndUpdateDraft from "./AutoSaveAndUpdateDraft";
 
 class DetailDraft extends Component {
@@ -16,9 +16,9 @@ class DetailDraft extends Component {
 
   async componentDidMount() {
     let id = this.props.match.params.id;
-    let res = await serviceDrafts.handelgetDraftByID(id);
+    let res = await draftsService.handelGetOneDraft(id);
 
-    if (res && res.EC === 0) {
+    if (res && res.success === true) {
       this.setState({
         dataUpdate: res.data,
       });

@@ -37,7 +37,6 @@ class HomeCreater extends Component {
         if (user && !user.isLoginRedux) {
             this.props.history.push('/login')
         } else {
-
             let token = user.userInfo.token.token
             await getAccountUser(token)
         }

@@ -11,12 +11,16 @@ class SelectCateBook extends React.Component {
         }
     }
 
-    componentDidUpdate(prevProps) {
-        if (this.props.valueInputDefault !== prevProps.valueInputDefault) {
+
+    // get value default select 
+    componentDidMount() {
+        if (this.props.valueInputDefault) {
             this.setState({ valueInput: this.props.valueInputDefault });
         }
-    }
+    }   
 
+
+    // func change value
     handleChange = (e) => {
         this.setState({ valueInput: e.target.value });
         this.props.handelInputVale(e, this.props.keyInput)

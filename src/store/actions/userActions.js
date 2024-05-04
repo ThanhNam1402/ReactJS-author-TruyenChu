@@ -15,8 +15,7 @@ export const getAccountUser = (token) => {
     return async (dispatch, getState) => {
         try {
             let res = await userService.handelGetAccount(token)
-            console.log("res", res);
-
+            
             dispatch(getAccountSuccess(res.data))
         } catch (error) {
             dispatch(getAccountFail(error.message))

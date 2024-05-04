@@ -14,9 +14,8 @@ class AddDraft extends Component {
 
   componentDidMount() {
     try {
-
       console.log(this.props);
-      let idBook = this.props.location.state.idBook;
+      let idBook = this.props.location.state ? this.props.location.state.idBook : "";
       this.setState({ idBook: idBook });
     } catch (error) {
       console.log(error);
@@ -24,7 +23,6 @@ class AddDraft extends Component {
   }
 
   render() {
-    console.log(this.props);
     return (
       <>
         <Box>

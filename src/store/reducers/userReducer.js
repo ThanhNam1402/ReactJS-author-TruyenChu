@@ -11,7 +11,6 @@ const initialState = {
 const userReducer = (state = initialState, action) => {
     switch (action.type) {
         case actionTypes.USER_LOGIN_SUCCESS:
-            console.log(' token sucs');
             return {
                 ...state,
                 isLoginRedux: true,
@@ -20,8 +19,6 @@ const userReducer = (state = initialState, action) => {
                 }
             }
         case actionTypes.USER_LOGOUT_SUCCESS:
-            console.log(' token fail');
-
             return {
                 ...state,
                 isLoginRedux: false,
@@ -32,12 +29,10 @@ const userReducer = (state = initialState, action) => {
             }
 
         case actionTypes.REFRESH_TOKEN_REQUEST:
-            console.log('refresh token request');
             return {
                 ...state,
             }
         case actionTypes.REFRESH_TOKEN_SUCCESS:
-            console.log('refresh token success');
             return {
                 ...state,
                 userInfo: {
@@ -46,13 +41,11 @@ const userReducer = (state = initialState, action) => {
                 }
             }
         case actionTypes.REFRESH_TOKEN_FAIL:
-            console.log('refresh token failed');
             return {
                 ...state,
             }
 
         case actionTypes.GET_ACCOUNT_SUCCESS:
-            console.log('get account success');
             return {
                 ...state,
                 userInfo: {

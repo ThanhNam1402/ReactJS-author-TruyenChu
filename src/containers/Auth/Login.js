@@ -27,25 +27,25 @@ class Login extends Component {
         let coppyState = { ...this.state }
         coppyState[id] = e.target.value
         this.setState({ ...coppyState })
-
     }
 
     handleSubmit = async () => {
+
+
         try {
             let user = this.state
+
             let res = await userService.handelLogin(user);
 
-            if (res && res.EC !== 0) {
-                toast.error(res.EM)
-            }
-            if (res && res.EC === 0) {
+            if (res && res.success === true) {
 
                 const { userLoginSuccess } = this.props;
                 let token = res.data
                 userLoginSuccess(token)
 
                 this.props.history.push('/')
-
+            } else {
+                toast.error(res.message)
             }
 
         } catch (error) {
@@ -168,7 +168,6 @@ const mapDispatchToProps = dispatch => {
     return {
         navigate: (path) => dispatch(push(path)),
         userLoginSuccess: (token) => dispatch(actions.userLoginSuccess(token)),
-        // userLoginFail: () => dispatch(actions.userLoginSuccess()),
     };
 };
 

@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { toast } from 'react-toastify';
 import { Box, Typography, Card, CardContent, Checkbox, FormControlLabel, TextField, InputLabel, Button } from '@mui/material';
 
-import serviceBooks from '../../../services/serviceBooks';
+import booksService from '../../../services/booksService';
 import SelectCateBook from './SelectCateBook'
 
 import './Book.scss';
@@ -18,7 +18,6 @@ class AddBook extends Component {
             SCHOOL: [],
             arrCategory: [],
             checkBox: true,
-            isLoading: false,
 
             newBook: {
                 name: '',
@@ -33,34 +32,42 @@ class AddBook extends Component {
     }
 
     componentDidMount() {
-        this.handelGetCateGoRy()
-        this.handelGetAllTag()
+        this.handleGetCateGoRy()
+        this.handleGetAllTag()
     }
 
-    handelGetCateGoRy = async () => {
-        let coppyState = { ...this.state.arrCategory }
-        let cate = await serviceBooks.handelGetCateGoRy();
-        coppyState = cate.data.data
-        this.setState({
-            arrCategory: coppyState
-        })
+    handleGetCateGoRy = async () => {
+        try {
+            let coppyState = { ...this.state.arrCategory }
+            let res = await booksService.handleGetCateGoRy();
+            coppyState = res.data
+            this.setState({
+                arrCategory: coppyState
+            })
+        } catch (error) {
+            console.log(error.message);
+        }
     }
 
-    handelGetAllTag = async () => {
+    handleGetAllTag = async () => {
+        try {
+            let typeTags = await booksService.handleGetAllTag();
+            let data = typeTags.data
 
-        let cate = await serviceBooks.handelGetAllTag();
-        let data = cate.data.data
+            console.log("typeTags", typeTags);
 
-        let cateState = ['WORLD', 'SCHOOL', 'POETRY', 'CHARACTER']
+            let cateState = ['WORLD', 'SCHOOL', 'POETRY', 'CHARACTER']
 
-        const result = cateState.reduce((acc, type) => {
-            const items = data.filter(item => item.type === type);
-            acc[type] = items;
-            return acc;
-        }, {});
+            const result = cateState.reduce((acc, type) => {
+                const items = data.filter(item => item.type === type);
+                acc[type] = items;
+                return acc;
+            }, {});
 
-        this.setState(result);
-
+            this.setState(result);
+        } catch (error) {
+            console.log(error.message);
+        }
     }
 
     handelInputVale = (e, id) => {
@@ -71,19 +78,14 @@ class AddBook extends Component {
 
     handelAdd = async () => {
 
-        this.setState({ isLoading: true })
-
         let isValid = this.isValid()
 
         if (!isValid) {
-            this.setState({ isLoading: false })
             return false
         }
 
         if (this.state.checkBox) {
-            this.setState({ isLoading: false })
             return toast.error('Vui Lòng Đồng ý Với Chính Sách  !!')
-
         }
 
         let creatorID = this.props.userAccount.id
@@ -91,19 +93,19 @@ class AddBook extends Component {
         let newBook = {
             ...this.state.newBook, creatorID
         }
-        let data = await serviceBooks.handelAddBook(newBook);
+        let data = await booksService.handleAddBook(newBook);
 
         console.log(data);
 
-        if (data && data.EC === 0) {
-            toast.success(data.EM);
+        if (data && data.success === true) {
+
+            toast.success(data.message);
+
+            this.props.history.push('/creator/books')
+
         } else {
-            toast.error(data.EM);
+            toast.error(data.message);
         }
-
-        this.setState({ isLoading: false })
-
-        this.props.history.push('/creater/books')
 
     }
 
@@ -213,11 +215,12 @@ class AddBook extends Component {
                                 <FormControlLabel control={<Checkbox onClick={() => this.handelCheckBox()} />} label="Đồng Ý Với Chính Sách" />
                             </Box>
 
-                            <Button fullWidth
+                            <Button
+                                fullWidth
                                 onClick={() => this.handelAdd()}
-                                variant="contained" color='secondary' sx={{ width: '100%', color: 'primary.main' }}
+                                variant="contained" color='secondary'
                             >
-                                {this.state.isLoading ? <i className="fas fa-spinner fa-spin"></i> : "Thêm Mới"}
+                                Thêm Mới
                             </Button>
 
                         </form>

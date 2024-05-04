@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 
-import createrService from '../../../services/createrService';
+import topicsService from '../../../services/topicsService';
 import moment from 'moment';
 
 import { Card, CardContent, Typography, Box } from '@mui/material';
@@ -22,9 +22,7 @@ class DetailTopic extends Component {
 
             console.log(slug);
 
-            let res = await createrService.handelgetTopicbBySlug(slug);
-
-            console.log(res);
+            let res = await topicsService.handlegetTopicBySlug(slug);
 
             if (res && res.EC === 0) {
 
