@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { toast } from 'react-toastify';
+import { connect } from 'react-redux';
 import { Card, CardContent, Box, Button, Typography, InputLabel, TextField, Grid } from '@mui/material';
 
 import serviceBooks from '../../../services/booksService';
@@ -15,13 +16,6 @@ class EditBook extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            WORLD: [],
-            CHARACTER: [],
-            POETRY: [],
-            SCHOOL: [],
-            STATE: [],
-            arrCategory: [],
-            checkBox: true,
             isLoading: false,
 
             book: {
@@ -39,9 +33,6 @@ class EditBook extends Component {
     }
 
     async componentDidMount() {
-
-        this.handleGetAllTag()
-        this.handleGetCateGoRy()
         this.handleGetBook()
     }
 
@@ -78,40 +69,11 @@ class EditBook extends Component {
         }
     }
 
-    handleGetAllTag = async () => {
-        try {
-            let res = await serviceBooks.handleGetAllTag();
-            let data = res.data
-            let cateState = ['WORLD', 'SCHOOL', 'POETRY', 'CHARACTER', 'STATE']
-
-            const result = cateState.reduce((acc, type) => {
-                const items = data.filter(item => item.type === type);
-                acc[type] = items;
-                return acc;
-            }, {});
-
-            this.setState(result);
-        } catch (error) {
-            console.log(error);
-        }
-    }
-
-    handleGetCateGoRy = async () => {
-        let coppyState = { ...this.state.arrCategory }
-        let cate = await serviceBooks.handleGetCateGoRy();
-        coppyState = cate.data
-        this.setState({
-            arrCategory: coppyState
-        })
-
-    }
-
     handelInputVale = (e, id) => {
         let coppyState = { ...this.state }
         coppyState.book[id] = e.target.value
         this.setState({ ...coppyState })
     }
-
 
 
     handelEditBook = async () => {
@@ -132,9 +94,10 @@ class EditBook extends Component {
     }
 
     render() {
-
-        let { WORLD, SCHOOL, POETRY, CHARACTER, STATE, arrCategory, isLoading } = this.state;
+        let { isLoading } = this.state;
         let { content, name, bookPoetry, bookSchool, bookState, bookChar, bookWorld, categoryID } = this.state.book
+        let categories = this.props.optionBook?.categories
+        let { WORLD, CHARACTER, SCHOOL, POETRY, STATE } = this.props.optionBook?.tagType
 
         return (
             <>
@@ -187,7 +150,7 @@ class EditBook extends Component {
 
                                     <SelectCateBook
                                         valueInputDefault={categoryID}
-                                        cateValue={arrCategory}
+                                        cateValue={categories}
                                         labelName='Thể Loại'
                                         keyInput={'categoryID'}
                                         handelInputVale={this.handelInputVale}
@@ -297,4 +260,14 @@ class EditBook extends Component {
 
 }
 
-export default EditBook
+const mapStateToProps = state => {
+    return {
+        optionBook: state.book
+    };
+};
+
+const mapDispatchToProps = dispatch => {
+    return {};
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(EditBook);

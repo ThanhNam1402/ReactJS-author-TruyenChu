@@ -21,8 +21,6 @@ instance.interceptors.request.use((config) => {
     const token = currentState.user?.userInfo?.token?.token;
 
     if (!config.headers["Authorization"]) {
-        console.log('no authorization header', token);
-
         config.headers["Authorization"] = `Bearer ${token}`;
 
     }
@@ -41,7 +39,6 @@ instance.interceptors.response.use(
 
     }, async (error) => {
         if (error.response) {
-            console.log(error.response);
 
             if (error.response.status === 401) {
                 const originalRequest = error.config;
@@ -72,14 +69,10 @@ instance.interceptors.response.use(
 
                             await store.dispatch(actions.refreshTokenSuccess(res.data))
 
-                            console.log("token refresh: ", refreshToken);
-
                             axios.defaults.headers.common['Authorization'] = `Bearer ${res.data.token}`
                             originalRequest.headers['Authorization'] = `Bearer ${res.data.token}`;
 
                             error.response.config.data = { token: res.data.token }
-
-                            console.log(error.response);
 
                             return instance(error.config)
                         } else {

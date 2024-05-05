@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Route, Switch } from 'react-router-dom';
+import _ from 'lodash';
+
 import NavCreater from '../../../ReactJS/src/containers/Creater/Navigation/NavCreater.js';
 import HeaderCreater from '../containers/Creater/HeaderCreator.js';
 import HomePage from '../../../ReactJS/src/containers/Creater/Home/HomePage.js';
@@ -22,8 +24,9 @@ import * as actions from "../store/actions";
 import './HomeCreater.scss';
 
 import { Box, Container } from '@mui/material';
-
 import { delay } from '../utils';
+
+
 
 class HomeCreater extends Component {
 
@@ -32,16 +35,27 @@ class HomeCreater extends Component {
         await delay(1000)
         console.log('mount 1s', this.props);
 
-        let { user, getAccountUser } = this.props;
+        let { user, optionBook, getAccountUser, getTagType, getCategories } = this.props;
 
         if (user && !user.isLoginRedux) {
             this.props.history.push('/login')
         } else {
+            let allTagTypes = optionBook.tagType
             let token = user.userInfo.token.token
-            await getAccountUser(token)
-        }
+            let categories = optionBook.categories
 
+            await getAccountUser(token)
+
+            if (allTagTypes && _.isEmpty(allTagTypes)) {
+                await getTagType()
+            }
+
+            if (categories && _.isEmpty(categories)) {
+                await getCategories()
+            }
+        }
     }
+
 
     render() {
 
@@ -54,9 +68,7 @@ class HomeCreater extends Component {
                     <div className='w-100'>
                         <HeaderCreater />
 
-                        <Box className="body-wrapper content" sx={{
-                            pb: '90px'
-                        }}>
+                        <Box className="content" sx={{ pb: '90px' }}>
                             <Switch>
                                 <Route path="/" exact component={HomePage} />
 
@@ -85,13 +97,16 @@ class HomeCreater extends Component {
 
 const mapStateToProps = state => {
     return {
-        user: state.user ? state.user : null
+        user: state.user ? state.user : null,
+        optionBook: state.book
     };
 };
 
 const mapDispatchToProps = dispatch => {
     return {
         getAccountUser: (token) => dispatch(actions.getAccountUser(token)),
+        getTagType: () => dispatch(actions.getTagType()),
+        getCategories: () => dispatch(actions.getCategories())
     };
 };
 

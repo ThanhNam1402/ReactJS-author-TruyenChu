@@ -2,6 +2,7 @@ import { combineReducers } from 'redux';
 import { connectRouter } from 'connected-react-router';
 
 import userReducer from "./userReducer";
+import bookReducer from './bookReducer';
 
 import autoMergeLevel2 from 'redux-persist/lib/stateReconciler/autoMergeLevel2';
 import storage from 'redux-persist/lib/storage';
@@ -17,10 +18,16 @@ const userPersistConfig = {
     key: 'user',
     whitelist: ['isLoginRedux', 'userInfo']
 };
+const bookPersistConfig = {
+    ...persistCommonConfig,
+    key: 'book',
+    whitelist: ['tagType', 'categories']
+};
 
 const createRootReducer = (history) => combineReducers({
-    user: persistReducer(userPersistConfig, userReducer),
     router: connectRouter(history),
+    user: persistReducer(userPersistConfig, userReducer),
+    book: persistReducer(bookPersistConfig, bookReducer),
 })
 
 export default createRootReducer 

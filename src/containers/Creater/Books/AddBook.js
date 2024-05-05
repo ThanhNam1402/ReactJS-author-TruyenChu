@@ -12,13 +12,7 @@ class AddBook extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            WORLD: [],
-            CHARACTER: [],
-            POETRY: [],
-            SCHOOL: [],
-            arrCategory: [],
             checkBox: true,
-
             newBook: {
                 name: '',
                 content: '',
@@ -28,45 +22,6 @@ class AddBook extends Component {
                 bookSchool: '',
                 bookPoetry: '',
             }
-        }
-    }
-
-    componentDidMount() {
-        this.handleGetCateGoRy()
-        this.handleGetAllTag()
-    }
-
-    handleGetCateGoRy = async () => {
-        try {
-            let coppyState = { ...this.state.arrCategory }
-            let res = await booksService.handleGetCateGoRy();
-            coppyState = res.data
-            this.setState({
-                arrCategory: coppyState
-            })
-        } catch (error) {
-            console.log(error.message);
-        }
-    }
-
-    handleGetAllTag = async () => {
-        try {
-            let typeTags = await booksService.handleGetAllTag();
-            let data = typeTags.data
-
-            console.log("typeTags", typeTags);
-
-            let cateState = ['WORLD', 'SCHOOL', 'POETRY', 'CHARACTER']
-
-            const result = cateState.reduce((acc, type) => {
-                const items = data.filter(item => item.type === type);
-                acc[type] = items;
-                return acc;
-            }, {});
-
-            this.setState(result);
-        } catch (error) {
-            console.log(error.message);
         }
     }
 
@@ -131,7 +86,9 @@ class AddBook extends Component {
     }
 
     render() {
-        let { name, content, arrCategory, WORLD, CHARACTER, SCHOOL, POETRY } = this.state;
+        let { WORLD, CHARACTER, SCHOOL, POETRY } = this.props.optionBook?.tagType
+        let categories = this.props.optionBook?.categories
+        let { name, content } = this.state;
 
         return (
             <>
@@ -181,7 +138,7 @@ class AddBook extends Component {
                             </Box>
 
                             <SelectCateBook
-                                cateValue={arrCategory}
+                                cateValue={categories}
                                 labelName='Thể Loại'
                                 keyInput={'categoryID'}
                                 handelInputVale={this.handelInputVale}
@@ -234,7 +191,8 @@ class AddBook extends Component {
 
 const mapStateToProps = state => {
     return {
-        userAccount: state.user.userInfo.account
+        userAccount: state.user.userInfo.account,
+        optionBook: state.book
     };
 };
 

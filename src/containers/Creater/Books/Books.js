@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import { toast } from 'react-toastify';
 
 import { CardContent, Typography, Box, Grid, Tooltip, Accordion, AccordionSummary } from '@mui/material';
-import { FormatListNumbered, AddCircleOutline, Edit, Delete, ExpandMore, Search } from '@mui/icons-material';
+import { FormatListNumbered, AddCircleOutline, Edit, Delete, ExpandMore } from '@mui/icons-material';
 import { Button as ButtonMUI } from '@mui/material';
 
 import serviceBooks from '../../../services/booksService';
@@ -29,7 +29,9 @@ class Books extends Component {
     async componentDidMount() {
         this.handleGetBook()
     }
-
+    handleOnChange(e) {
+        console.log(e);
+    }
 
     handleGetBook = async () => {
         try {
@@ -81,7 +83,9 @@ class Books extends Component {
                 </Box>
                 <Box sx={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center' }}>
 
-                    <SelectInput />
+                    <SelectInput
+                        handleOnChange={this.handleOnChange}
+                    />
 
                     <SearchComponent />
 
@@ -174,7 +178,6 @@ class Books extends Component {
                                                                     <FormatListNumbered sx={{ color: 'primary.sub' }} />
                                                                 </Link>
                                                             </Tooltip>
-
                                                         </div>
 
 
@@ -191,8 +194,6 @@ class Books extends Component {
                                                                 }} />
                                                             </ButtonMUI>
                                                         </Tooltip>
-
-
                                                     </Box>
 
                                                 </CardContent>
@@ -202,12 +203,15 @@ class Books extends Component {
                                 })
                             }
 
+                            {listBook.length >= 2 &&
+                                <Box sx={{ display: 'flex', justifyContent: 'center', width : '100%', mt : '16px' }}>
+                                    <ButtonMUI variant="contained" color="secondary">Xem Thêm</ButtonMUI>
+                                </Box>
+                            }
+
                         </Grid >
                 }
-
-
             </>
-
         )
 
     }
