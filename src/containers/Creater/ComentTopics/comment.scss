@@ -1,0 +1,11 @@
+.model-action {
+    position: relative;
+
+    .model-action-item {
+        position: absolute;
+        top: -55px;
+        left: -120px;
+        z-index: 100;
+        min-width: 120px;
+    }
+}

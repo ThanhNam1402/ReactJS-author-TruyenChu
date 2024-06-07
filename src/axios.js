@@ -7,9 +7,6 @@ import store from './redux';
 import actionTypes from './store/actions/actionTypes';
 import * as actions from "./store/actions"
 
-import { createBrowserHistory } from 'history';
-
-
 const instance = axios.create({
     baseURL: process.env.REACT_APP_BACKEND_URL,
     withCredentials: true
@@ -18,11 +15,10 @@ const instance = axios.create({
 instance.interceptors.request.use((config) => {
 
     const currentState = store.getState()
-    const token = currentState.user?.userInfo?.token?.token;
+    const token = currentState.user?.userInfo?.token?.token ?? '';
 
     if (!config.headers["Authorization"]) {
         config.headers["Authorization"] = `Bearer ${token}`;
-
     }
 
     return config;
@@ -40,13 +36,19 @@ instance.interceptors.response.use(
     }, async (error) => {
         if (error.response) {
 
+            console.log(error.response);
+
             if (error.response.status === 401) {
                 const originalRequest = error.config;
+
+                console.log("originalRequest.url", originalRequest.url);
+
                 const currentState = store.getState()
                 const refreshToken = currentState.user?.userInfo?.token?.refresh_token;
 
-
-                if (error.response.status === 401 && originalRequest.url === `/api/refresh/`) {
+                // lặp vô tận khi refresh token is expired 
+                if (error.response.status === 401 && originalRequest.url === `/api/refresh`) {
+                    console.log(originalRequest.url);
                     window.location.href = '/login'
                     return Promise.reject(error);
                 }
@@ -59,11 +61,14 @@ instance.interceptors.response.use(
                 ) {
 
                     if (refreshToken) {
+
                         store.dispatch({
                             type: actionTypes.REFRESH_TOKEN_REQUEST,
                         });
 
-                        let res = await instance.post(`/api/refresh?token=${refreshToken}`)
+                        let res = await instance.post(`/api/refresh`, {
+                            token: refreshToken
+                        })
 
                         if (res && res.success === true) {
 

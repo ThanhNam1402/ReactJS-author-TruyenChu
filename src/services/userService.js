@@ -10,8 +10,8 @@ const userService = {
         return axios.post(`/api/logout`);
     },
 
-    handleRefreshToken(refreshToken) {
-        return axios.post(`/api/refresh?token=${refreshToken}`);
+    handleRefreshToken() {
+        return axios.post(`/api/refresh`);
     },
 
     handelGetAccount(token) {

@@ -2,30 +2,27 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Route, Switch } from 'react-router-dom';
 import _ from 'lodash';
+import { Box, Container } from '@mui/material';
 
-import NavCreater from '../../../ReactJS/src/containers/Creater/Navigation/NavCreater.js';
-import HeaderCreater from '../containers/Creater/HeaderCreator.js';
-import HomePage from '../../../ReactJS/src/containers/Creater/Home/HomePage.js';
+import NavCreater from '../containers/Creater/Navigation/NavCreater';
+import HeaderCreater from '../containers/Creater/HeaderCreator';
+import HomePage from "../containers/Creater/Home/HomePage";
 
-import Books from '../../../ReactJS/src/containers/Creater/Books/Books.js';
-import AddBook from '../../../ReactJS/src/containers/Creater/Books/AddBook.js';
-import EditBook from '../../../ReactJS/src/containers/Creater/Books/EditBook.js';
+import Books from "../containers/Creater/Books/Books";
+import AddBook from "../containers/Creater/Books/AddBook";
+import EditBook from "../containers/Creater/Books/EditBook";
 
-import AddDraft from '../../../ReactJS/src/containers/Creater/Draft/AddDraft.jsx';
-import Draft from '../../../ReactJS/src/containers/Creater/Draft/ListDraft.js';
-import DetailDraft from '../../../ReactJS/src/containers/Creater/Draft/DetailDraft.jsx';
+import AddDraft from "../containers/Creater/Draft/AddDraft";
+import Draft from "../containers/Creater/Draft/ListDraft";
+import DetailDraft from "../containers/Creater/Draft/DetailDraft";
 
-import Chaters from '../../../ReactJS/src/containers/Creater/Chapters/Chapters.js';
-import EditChapter from '../../../ReactJS/src/containers/Creater/Chapters/EditChapter.js';
-import DetailTopic from '../containers/Creater/Home/DetailTopic.js';
+import Chaters from "../containers/Creater/Chapters/Chapters";
+import EditChapter from "../containers/Creater/Chapters/EditChapter";
+import DetailTopic from "../containers/Creater/topics/DetailTopic";
 
 import * as actions from "../store/actions";
-
-import './HomeCreater.scss';
-
-import { Box, Container } from '@mui/material';
 import { delay } from '../utils';
-
+import './HomeCreater.scss';
 
 
 class HomeCreater extends Component {
@@ -56,6 +53,9 @@ class HomeCreater extends Component {
         }
     }
 
+    componentDidUpdate() {
+
+    }
 
     render() {
 
@@ -71,7 +71,6 @@ class HomeCreater extends Component {
                         <Box className="content" sx={{ pb: '90px' }}>
                             <Switch>
                                 <Route path="/" exact component={HomePage} />
-
                                 <Route path="/creator/topic/:slug" exact component={DetailTopic} />
 
                                 <Route path="/creator/drafts/new" component={AddDraft} />

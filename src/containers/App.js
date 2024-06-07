@@ -8,7 +8,7 @@ import { path } from '../utils'
 
 import HomeCreater from '../routes/HomeCreater';
 
-import Login from '../containers/Auth/Login';
+import Login from './Auth/Login';
 
 import './App.scss';
 

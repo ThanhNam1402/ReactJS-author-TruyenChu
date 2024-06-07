@@ -37,10 +37,10 @@ export const userLogout = (data) => ({
     type: actionTypes.USER_LOGOUT_SUCCESS,
 })
 
-export const refreshToken = (refreshToken) => {
+export const refreshToken = () => {
     return async (dispatch, getState) => {
         try {
-            let res = await userService.handleRefreshToken(refreshToken)
+            let res = await userService.handleRefreshToken()
             console.log("res", res);
             let token = res.data
             dispatch(refreshTokenSuccess(token))

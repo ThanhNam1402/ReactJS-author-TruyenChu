@@ -3,7 +3,11 @@ import axios from "../axios";
 const serviceBooks = {
 
     handlegetAllBooks(creatorID) {
-        return axios.get(`/api/creator/books?creatorID=${creatorID}`)
+        return axios.get(`/api/creator/books`, {
+            params: {
+                creatorID: creatorID
+            }
+        })
     },
     handleGetOneBook(id) {
         return axios.get(`/api/creator/book/${id}`)
